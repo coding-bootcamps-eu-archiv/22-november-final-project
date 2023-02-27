@@ -6,12 +6,19 @@
     <form>
       <div class="entry-questions">
         <radio-select
+          id="selectedNumberOfQuestions"
           question="How many Questions?"
           :selections="numberOfQuestions"
+          @emitSelected="handleSelected"
         />
-        <radio-select question="Which topic?" :selections="topicOfQuestions" />
+        <radio-select
+          id="selectedTopic"
+          question="Which topic?"
+          :selections="topicOfQuestions"
+          @emitSelected="handleSelected"
+        />
       </div>
-      <button class="play-btn">Play</button>
+      <button class="play-btn" @click.prevent="startGame">Play</button>
     </form>
   </main>
 </template>
@@ -26,12 +33,14 @@ export default {
   },
   data() {
     return {
+      selectedNumberOfQuestions: 5,
       numberOfQuestions: [
-        { title: 5, id: "five", checked: true },
-        { title: 10, id: "ten", checked: false },
-        { title: 15, id: "fifteen", checked: false },
-        { title: 20, id: "twenty", checked: false },
+        { title: 5, id: 5, checked: true },
+        { title: 10, id: 10, checked: false },
+        { title: 15, id: 15, checked: false },
+        { title: 20, id: 20, checked: false },
       ],
+      selectedTopic: "c76668d0-ce3a-48a7-acd5-0f54ad6818e1",
       topicOfQuestions: [
         {
           title: "HTML and CSS",
@@ -46,6 +55,30 @@ export default {
         { title: "All", id: "all", checked: false },
       ],
     };
+  },
+  computed: {
+    url() {
+      let url = "";
+      if (this.selectedTopic === "all") {
+        url = "http://localhost:3000/quiz/collection?";
+      } else {
+        url =
+          "http://localhost:3000/quiz/collection?group=" +
+          this.selectedTopic +
+          "&";
+      }
+      return url + "limit=" + this.selectedNumberOfQuestions + "&random=1";
+    },
+  },
+  methods: {
+    handleSelected(id, selection) {
+      this[id] = selection;
+    },
+    startGame() {
+      this.$router.push({
+        name: "gamePage",
+      });
+    },
   },
 };
 </script>
