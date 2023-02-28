@@ -31,6 +31,7 @@ export default {
   components: {
     RadioSelect,
   },
+  emits: ["transferURL"],
   data() {
     return {
       selectedNumberOfQuestions: 5,
@@ -77,7 +78,12 @@ export default {
     startGame() {
       this.$router.push({
         name: "gamePage",
+        /* params: {
+          test: this.selectedTopic,
+        },*/
       });
+
+      this.$emit("transferURL", this.url);
     },
   },
 };
