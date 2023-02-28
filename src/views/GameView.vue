@@ -16,7 +16,8 @@
     <form>
       <div class="wrapper">
         <div class="questions_wrapper">
-          <p>{{ currentQuestion.question + url }}</p>
+          <p>{{ $route.params.topic + " " + $route.params.number }}</p>
+          <p>{{ currentQuestion.question }}</p>
           <div class="checkbox-wrapper">
             <label
               v-for="answer of currentQuestion.answers"
@@ -40,7 +41,6 @@
 </template>
 
 <script>
-//$route.params.test
 export default {
   name: "GameView",
   props: {

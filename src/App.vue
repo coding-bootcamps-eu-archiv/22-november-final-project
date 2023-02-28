@@ -4,20 +4,11 @@
     <router-link :to="{ name: 'entryPage' }">Home</router-link> |
     <router-link to="/about">About</router-link>
   </nav>-->
-  <router-view>
-    {{ $route }}
-    <entry-view v-if="$route.path === '/'" @transferURL="handleURL" />
-    <game-view :url="this.url" v-else-if="$route.path === '/game'" />
-    <result-view v-else-if="$route.path === '/result'" />
-  </router-view>
+  <router-view />
 </template>
 
 <script>
-import EntryView from "./views/EntryView.vue";
-import GameView from "./views/GameView.vue";
-import ResultView from "./views/ResultView.vue";
 export default {
-  components: { EntryView, GameView, ResultView },
   name: "App",
   data() {
     return {

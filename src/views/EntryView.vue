@@ -78,9 +78,10 @@ export default {
     startGame() {
       this.$router.push({
         name: "gamePage",
-        /* params: {
-          test: this.selectedTopic,
-        },*/
+        params: {
+          topic: this.selectedTopic,
+          number: this.selectedNumberOfQuestions,
+        },
       });
 
       this.$emit("transferURL", this.url);

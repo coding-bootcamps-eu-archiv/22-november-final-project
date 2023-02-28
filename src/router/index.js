@@ -14,12 +14,12 @@ const routes = [
     name: "gamePage",
     component: GameView,
   },
-  /*{
-    path: "/game/:test",
+  {
+    path: "/game/:topic/:number",
     name: "gamePage",
     component: GameView,
     props: true,
-  },*/
+  },
   {
     path: "/result",
     name: "resultPage",
