@@ -9,6 +9,7 @@
           class="input-entry"
           :id="option.id"
           :checked="option.checked"
+          @click="emitSelected"
         />
         <div class="questions_label">{{ option.title }}</div>
       </label>
@@ -20,8 +21,15 @@
 export default {
   name: "RadioSelect",
   props: {
+    id: String,
     question: String,
     selections: Object,
+  },
+  methods: {
+    emitSelected(event) {
+      const checkedId = event.target.id;
+      this.$emit("emitSelected", this.id, checkedId);
+    },
   },
 };
 </script>
