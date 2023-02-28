@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import EntryView from "@/views/EntryView.vue";
-import GameView from "@/views/GameView.vue";
+//import GameView from "@/views/GameView.vue";
 import ResultView from "@/views/ResultView.vue";
 
 const routes = [
@@ -12,7 +12,7 @@ const routes = [
   {
     path: "/game",
     name: "gamePage",
-    component: GameView,
+    component: () => import("@/views/GameView.vue"),
   },
   {
     path: "/result",

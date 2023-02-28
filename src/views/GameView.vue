@@ -34,48 +34,28 @@
           </div>
         </div>
       </div>
-      <button class="next-btn">Next</button>
+      <button class="next-btn" @click.prevent="callNextQuestion">Next</button>
     </form>
+    {{ setOfQuestions }}
   </main>
 </template>
 
 <script>
+import { useQuizStore } from "@/stores/quizStore.js";
+
 export default {
   name: "GameView",
+  setup() {
+    const store = useQuizStore();
+    return { store };
+  },
   data() {
     return {
-      currentQuestionNumber: 10,
+      currentQuestionNumber: 0,
       selectedQuestionLength: 15,
       stopwatch: "0:34",
-      currentQuestion: {
-        groupId: "9d5ae045-ef9a-4068-bc6c-1b102bda5f55",
-        createdAt: 1667606819049,
-        isActive: true,
-        id: "9b2e970b-307a-4754-a35e-4e16ecc8d65b",
-        question: "Inside which HTML element do we put the JavaScript?",
-        answers: [
-          {
-            id: 1,
-            text: "&lt;js&gt;",
-            isValid: false,
-          },
-          {
-            id: 2,
-            text: "&lt;scripting&gt;",
-            isValid: false,
-          },
-          {
-            id: 3,
-            text: "&lt;javascript&gt;",
-            isValid: false,
-          },
-          {
-            id: 4,
-            text: "&lt;script&gt;",
-            isValid: true,
-          },
-        ],
-      },
+      setOfQuestions: {},
+      currentQuestion: {},
     };
   },
   computed: {
@@ -84,6 +64,20 @@ export default {
         (this.currentQuestionNumber / this.selectedQuestionLength) * 100 + "%"
       );
     },
+  },
+  methods: {
+    callNextQuestion() {
+      this.currentQuestionNumber += 1;
+      this.currentQuestion =
+        this.setOfQuestions.data[this.currentQuestionNumber];
+    },
+  },
+  // wir brauchen mounted, weil created bereits mit start der App geladen wird
+  async created() {
+    const response = await fetch(this.store.url);
+    this.setOfQuestions = await response.json();
+    this.selectedQuestionLength = this.setOfQuestions.numberOfItems;
+    this.currentQuestion = this.setOfQuestions.data[this.currentQuestionNumber];
   },
 };
 </script>
