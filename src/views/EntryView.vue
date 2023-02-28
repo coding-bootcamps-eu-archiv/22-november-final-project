@@ -2,7 +2,7 @@
   <main>
     <br />
     <h1>Time for a Quiz</h1>
-    <p>please select</p>
+    <p>please select {{ store.url }}</p>
     <form>
       <div class="entry-questions">
         <radio-select
@@ -25,11 +25,16 @@
 
 <script>
 import RadioSelect from "@/components/RadioSelect.vue";
+import { useQuizStore } from "@/stores/quizStore.js";
 
 export default {
   name: "EntryView",
   components: {
     RadioSelect,
+  },
+  setup() {
+    const store = useQuizStore();
+    return { store };
   },
   data() {
     return {
@@ -54,6 +59,7 @@ export default {
         },
         { title: "All", id: "all", checked: false },
       ],
+      fetchUrl: "halloTest",
     };
   },
   computed: {
@@ -75,6 +81,7 @@ export default {
       this[id] = selection;
     },
     startGame() {
+      this.store.url = this.fetchUrl;
       this.$router.push({
         name: "gamePage",
       });
