@@ -2,7 +2,7 @@
   <main>
     <br />
     <h1>Time for a Quiz</h1>
-    <p>please select {{ store.url }}</p>
+    <p>please select</p>
     <form>
       <div class="entry-questions">
         <radio-select
@@ -59,17 +59,16 @@ export default {
         },
         { title: "All", id: "all", checked: false },
       ],
-      fetchUrl: "halloTest",
     };
   },
   computed: {
     url() {
       let url = "";
       if (this.selectedTopic === "all") {
-        url = "http://localhost:3000/quiz/collection?";
+        url = "https://22-november.api.cbe.uber.space/quiz/collection?";
       } else {
         url =
-          "http://localhost:3000/quiz/collection?group=" +
+          "https://22-november.api.cbe.uber.space/quiz/collection?group=" +
           this.selectedTopic +
           "&";
       }
@@ -81,7 +80,7 @@ export default {
       this[id] = selection;
     },
     startGame() {
-      this.store.url = this.fetchUrl;
+      this.store.url = this.url;
       this.$router.push({
         name: "gamePage",
       });
