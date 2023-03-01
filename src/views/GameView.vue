@@ -67,6 +67,7 @@ export default {
         min: 0,
         sec: 0,
       },
+      currentInterval: undefined,
       setOfQuestions: {},
       currentQuestion: {},
       currentAnswer: {
@@ -106,11 +107,13 @@ export default {
           this.buttonCaption = "result";
         }
       } else {
-        let second = this.stopwatch.sec.toString();
+        clearInterval(this.currentInterval);
+
+        let second = this.stopwatch.sec;
         if (second < 10) {
           second = "0" + second;
         }
-        this.store.stopwatch = this.stopwatch.min.toString() + ":" + second;
+        this.store.stopwatch = this.stopwatch.min + ":" + second;
         this.$router.push({ name: "resultPage" });
       }
     },
@@ -118,14 +121,13 @@ export default {
   /**
    * Todo implement button to go to start page when page is refreshed = url empty (incl. message)
    * */
-  async mounted() {
+  async created() {
     const response = await fetch(this.store.url);
     this.setOfQuestions = await response.json();
     this.selectedQuestionLength = this.setOfQuestions.numberOfItems;
     this.currentQuestion = this.setOfQuestions.data[this.currentQuestionNumber];
-  },
-  created() {
-    setInterval(() => {
+
+    this.currentInterval = setInterval(() => {
       this.stopwatch.sec++;
       if (this.stopwatch.sec === 60) {
         this.stopwatch.min++;
