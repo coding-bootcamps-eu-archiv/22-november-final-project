@@ -1,11 +1,11 @@
 <template>
   <main>
-    <h2 class="result-percentage">{{ progress }}</h2>
+    <h2 class="result-percentage">{{ resultData.passedRatio }}</h2>
     <div class="result-bar">
       <div
         class="result-bar_current"
         :style="{
-          '--progress-value': progress,
+          '--progress-value': resultData.passedRatio,
         }"
       ></div>
     </div>
@@ -23,14 +23,137 @@
 </template>
 
 <script>
+import { useQuizStore } from "@/stores/quizStore.js";
+
 export default {
   name: "ResultView",
+  setup() {
+    const store = useQuizStore();
+    return { store };
+  },
   data() {
     return {
-      progress: "90%",
+      resultData: {},
     };
   },
+  async created() {
+    const response = await fetch(
+      "https://22-november.api.cbe.uber.space/quiz/result",
+      {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          elapsedTime: 180,
+          data: [
+            {
+              id: "0dcbdd75-ce3a-48a7-89b2-4707ad6818e1",
+              selected: [3],
+            },
+            {
+              id: "1b54d1f0-aaef-4e1f-b7c4-d153afcd60db",
+              selected: [0],
+            },
+          ],
+        }),
+      }
+    );
+    const resultData = await response.json();
+    this.resultData = resultData;
+    console.log(resultData);
+  },
 };
+
+/*
+valid Body: 
+    {
+        elapsedTime: 180,
+        data: [
+          {
+            id: "0dcbdd75-ce3a-48a7-89b2-4707ad6818e1",
+            selected: [3],
+          },
+          {
+            id: "1b54d1f0-aaef-4e1f-b7c4-d153afcd60db",
+            selected: [2],
+          },
+        ],
+      } 
+
+      
+response:
+{
+    "elapsedTime": 180,
+    "passedRatio": "100.00%",
+    "total": 2,
+    "result": [
+        2,
+        2
+    ],
+    "details": [
+        {
+            "id": "0dcbdd75-ce3a-48a7-89b2-4707ad6818e1",
+            "isCorrect": true,
+            "question": "What is the correct HTML for referring to an external style sheet?",
+            "selectedAnswers": [
+                3
+            ],
+            "answerDetails": [
+                {
+                    "id": 1,
+                    "text": "At the end of the document.",
+                    "isValid": false,
+                    "selectedByUser": false
+                },
+                {
+                    "id": 2,
+                    "text": "In the &lt;body&gt; section.",
+                    "isValid": false,
+                    "selectedByUser": false
+                },
+                {
+                    "id": 3,
+                    "text": "In the &lt;head&gt; section.",
+                    "isValid": true,
+                    "selectedByUser": true
+                }
+            ]
+        },
+        {
+            "id": "1b54d1f0-aaef-4e1f-b7c4-d153afcd60db",
+            "isCorrect": true,
+            "question": "Which property is used to change the background color with css?",
+            "selectedAnswers": [
+                2
+            ],
+            "answerDetails": [
+                {
+                    "id": 1,
+                    "text": "bgcolor",
+                    "isValid": false,
+                    "selectedByUser": false
+                },
+                {
+                    "id": 2,
+                    "text": "background-color",
+                    "isValid": true,
+                    "selectedByUser": true
+                },
+                {
+                    "id": 3,
+                    "text": "color",
+                    "isValid": false,
+                    "selectedByUser": false
+                },
+                {
+                    "id": 4,
+                    "text": "coulor",
+                    "isValid": false,
+                    "selectedByUser": false
+                }
+            ]
+        }
+    ]
+} */
 </script>
 
 <style>
