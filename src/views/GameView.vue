@@ -11,7 +11,11 @@
         {{ displayProgress + "/" + selectedQuestionLength }}
       </p>
     </div>
-    <p class="stop-watch">{{ stopwatch }}</p>
+    <p class="stop-watch">
+      {{ stopwatch.min + ":" }}
+      <span class="stop-watch_span" v-if="stopwatch.sec < 10">0</span
+      >{{ stopwatch.sec }}
+    </p>
     <form>
       <div class="wrapper">
         <div class="questions_wrapper">
@@ -59,7 +63,11 @@ export default {
     return {
       currentQuestionNumber: 0,
       selectedQuestionLength: 15,
-      stopwatch: "0:34",
+      stopwatch: {
+        min: 0,
+        sec: 0,
+      },
+      currentInterval: undefined,
       setOfQuestions: {},
       currentQuestion: {},
       currentAnswer: {
@@ -99,6 +107,13 @@ export default {
           this.buttonCaption = "result";
         }
       } else {
+        clearInterval(this.currentInterval);
+
+        let second = this.stopwatch.sec;
+        if (second < 10) {
+          second = "0" + second;
+        }
+        this.store.stopwatch = this.stopwatch.min + ":" + second;
         this.$router.push({ name: "resultPage" });
       }
     },
@@ -111,6 +126,14 @@ export default {
     this.setOfQuestions = await response.json();
     this.selectedQuestionLength = this.setOfQuestions.numberOfItems;
     this.currentQuestion = this.setOfQuestions.data[this.currentQuestionNumber];
+
+    this.currentInterval = setInterval(() => {
+      this.stopwatch.sec++;
+      if (this.stopwatch.sec === 60) {
+        this.stopwatch.min++;
+        this.stopwatch.sec = 0;
+      }
+    }, 1000);
   },
 };
 </script>
@@ -178,6 +201,10 @@ export default {
   .stop-watch {
     font-size: 1.5rem;
     top: 1rem;
+  }
+  .stop-watch_span {
+    color: rgb(227, 181, 5);
+    font-size: 1.5rem;
   }
   .progress-text {
     font-size: 1.5rem;
