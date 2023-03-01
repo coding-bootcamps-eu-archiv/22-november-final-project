@@ -8,15 +8,14 @@
         }"
       ></div>
       <p class="progress-text">
-        {{ currentQuestionNumber + "/" + selectedQuestionLength }}
+        {{ displayProgress + "/" + selectedQuestionLength }}
       </p>
     </div>
     <p class="stop-watch">{{ stopwatch }}</p>
-
     <form>
       <div class="wrapper">
         <div class="questions_wrapper">
-          <p>{{ currentQuestion.question }}</p>
+          <p v-html="currentQuestion.question"></p>
           <div class="checkbox-wrapper">
             <label
               v-for="answer of currentQuestion.answers"
@@ -28,62 +27,90 @@
                 :name="currentQuestion.question"
                 class="input-question"
                 :id="answer.id"
+                v-model="currentAnswer.selected"
+                :value="answer.id"
               />
               <div class="questions_label" v-html="answer.text"></div>
             </label>
           </div>
         </div>
       </div>
-      <button class="next-btn">Next</button>
+      <button
+        class="next-btn"
+        @click.prevent="callNextQuestion"
+        :disabled="noAnswerSelected"
+      >
+        {{ buttonCaption }}
+      </button>
     </form>
   </main>
 </template>
 
 <script>
+import { useQuizStore } from "@/stores/quizStore.js";
+
 export default {
   name: "GameView",
+  setup() {
+    const store = useQuizStore();
+    return { store };
+  },
   data() {
     return {
-      currentQuestionNumber: 10,
+      currentQuestionNumber: 0,
       selectedQuestionLength: 15,
       stopwatch: "0:34",
-      currentQuestion: {
-        groupId: "9d5ae045-ef9a-4068-bc6c-1b102bda5f55",
-        createdAt: 1667606819049,
-        isActive: true,
-        id: "9b2e970b-307a-4754-a35e-4e16ecc8d65b",
-        question: "Inside which HTML element do we put the JavaScript?",
-        answers: [
-          {
-            id: 1,
-            text: "&lt;js&gt;",
-            isValid: false,
-          },
-          {
-            id: 2,
-            text: "&lt;scripting&gt;",
-            isValid: false,
-          },
-          {
-            id: 3,
-            text: "&lt;javascript&gt;",
-            isValid: false,
-          },
-          {
-            id: 4,
-            text: "&lt;script&gt;",
-            isValid: true,
-          },
-        ],
+      setOfQuestions: {},
+      currentQuestion: {},
+      currentAnswer: {
+        id: "",
+        selected: [],
       },
+      buttonCaption: "next",
     };
   },
   computed: {
-    getProgressValue() {
-      return (
-        (this.currentQuestionNumber / this.selectedQuestionLength) * 100 + "%"
-      );
+    noAnswerSelected() {
+      return this.currentAnswer.selected.length === 0 ? true : false;
     },
+    displayProgress() {
+      return this.currentQuestionNumber + 1;
+    },
+    getProgressValue() {
+      return (this.displayProgress / this.selectedQuestionLength) * 100 + "%";
+    },
+  },
+  methods: {
+    callNextQuestion() {
+      this.currentAnswer.id = this.currentQuestion.id;
+      this.store.givenAnswers.push(this.currentAnswer);
+      this.currentAnswer = {
+        id: "",
+        selected: [],
+      };
+      if (this.currentQuestionNumber != this.setOfQuestions.data.length - 1) {
+        this.currentQuestionNumber += 1;
+        this.currentQuestion =
+          this.setOfQuestions.data[this.currentQuestionNumber];
+        if (
+          this.currentQuestionNumber ===
+          this.setOfQuestions.data.length - 1
+        ) {
+          this.buttonCaption = "result";
+        }
+      } else {
+        this.$router.push({ name: "resultPage" });
+      }
+    },
+  },
+  /**
+   * Todo implement button to go to start page when page is refreshed = url empty (incl. message)
+   * */
+  async created() {
+    const response = await fetch(this.store.url);
+    this.setOfQuestions = await response.json();
+    this.selectedQuestionLength = this.setOfQuestions.numberOfItems;
+    this.currentQuestion = this.setOfQuestions.data[this.currentQuestionNumber];
   },
 };
 </script>
@@ -187,9 +214,19 @@ export default {
   padding: 1rem 2rem;
   transition: scale 0.2s ease-out;
   margin: 2rem;
+  cursor: pointer;
 }
 
 .next-btn:hover {
   scale: 1.1;
+}
+
+.next-btn:hover:disabled {
+  scale: 1;
+}
+
+.next-btn:disabled {
+  background-color: rgb(17, 161, 26, 0.7);
+  cursor: default;
 }
 </style>
