@@ -1,52 +1,58 @@
 <template>
   <main>
-    <div class="progress-bar">
-      <div
-        class="progress-bar_current"
-        :style="{
-          '--progress-value': getProgressValue,
-        }"
-      ></div>
-      <p class="progress-text">
-        {{ displayProgress + "/" + selectedQuestionLength }}
+    <div v-if="store.url">
+      <div class="progress-bar">
+        <div
+          class="progress-bar_current"
+          :style="{
+            '--progress-value': getProgressValue,
+          }"
+        ></div>
+        <p class="progress-text">
+          {{ displayProgress + "/" + selectedQuestionLength }}
+        </p>
+      </div>
+      <p class="stop-watch">
+        {{ stopwatch.min + ":" }}
+        <span class="stop-watch_span" v-if="stopwatch.sec < 10">0</span
+        >{{ stopwatch.sec }}
       </p>
-    </div>
-    <p class="stop-watch">
-      {{ stopwatch.min + ":" }}
-      <span class="stop-watch_span" v-if="stopwatch.sec < 10">0</span
-      >{{ stopwatch.sec }}
-    </p>
-    <form>
-      <div class="wrapper">
-        <div class="questions_wrapper">
-          <p v-html="currentQuestion.question"></p>
-          <div class="checkbox-wrapper">
-            <label
-              v-for="answer of currentQuestion.answers"
-              :key="answer.id"
-              :for="answer.id"
-            >
-              <input
-                type="checkbox"
-                :name="currentQuestion.question"
-                class="input-question"
-                :id="answer.id"
-                v-model="currentAnswer.selected"
-                :value="answer.id"
-              />
-              <div class="questions_label" v-html="answer.text"></div>
-            </label>
+      <form>
+        <div class="wrapper">
+          <div class="questions_wrapper">
+            <p v-html="currentQuestion.question"></p>
+            <div class="checkbox-wrapper">
+              <label
+                v-for="answer of currentQuestion.answers"
+                :key="answer.id"
+                :for="answer.id"
+              >
+                <input
+                  type="checkbox"
+                  :name="currentQuestion.question"
+                  class="input-question"
+                  :id="answer.id"
+                  v-model="currentAnswer.selected"
+                  :value="answer.id"
+                />
+                <p class="questions_label" v-html="answer.text"></p>
+              </label>
+            </div>
           </div>
         </div>
-      </div>
-      <button
-        class="next-btn"
-        @click.prevent="callNextQuestion"
-        :disabled="noAnswerSelected"
-      >
-        {{ buttonCaption }}
-      </button>
-    </form>
+        <button
+          class="next-btn"
+          @click.prevent="callNextQuestion"
+          :disabled="noAnswerSelected"
+        >
+          {{ buttonCaption }}
+        </button>
+      </form>
+    </div>
+    <div v-else class="no-url-error">
+      Sorry no data found
+      <p>redirection in: <br />{{ stopwatch.sec }}</p>
+    </div>
   </main>
 </template>
 
@@ -87,6 +93,9 @@ export default {
     getProgressValue() {
       return (this.displayProgress / this.selectedQuestionLength) * 100 + "%";
     },
+    getStopwatchSeconds() {
+      return this.stopwatch.sec;
+    },
   },
   methods: {
     callNextQuestion() {
@@ -118,10 +127,15 @@ export default {
       }
     },
   },
-  /**
-   * Todo implement button to go to start page when page is refreshed = url empty (incl. message)
-   * */
   async created() {
+    if (!this.store.url) {
+      this.stopwatch.sec = 5;
+
+      this.currentInterval = setInterval(() => {
+        this.stopwatch.sec--;
+      }, 1000);
+    }
+
     const response = await fetch(this.store.url);
     this.setOfQuestions = await response.json();
     this.selectedQuestionLength = this.setOfQuestions.numberOfItems;
@@ -134,6 +148,14 @@ export default {
         this.stopwatch.sec = 0;
       }
     }, 1000);
+  },
+  watch: {
+    getStopwatchSeconds(newV, oldV) {
+      if (newV < oldV && newV === 0) {
+        clearInterval(this.currentInterval);
+        this.$router.push({ name: "entryPage" });
+      }
+    },
   },
 };
 </script>
@@ -177,6 +199,11 @@ export default {
   font-size: 1rem;
 }
 
+.stop-watch_span {
+  color: rgb(227, 181, 5);
+  font-size: 1rem;
+}
+
 .wrapper {
   display: grid;
   place-content: center;
@@ -203,7 +230,6 @@ export default {
     top: 1rem;
   }
   .stop-watch_span {
-    color: rgb(227, 181, 5);
     font-size: 1.5rem;
   }
   .progress-text {
@@ -226,6 +252,7 @@ export default {
   background-color: rgb(255, 255, 255, 0.3);
 }
 .questions_label {
+  color: white;
   padding: 0.5rem 1rem;
   border-radius: 2rem;
   border: 2px solid rgb(255, 255, 255, 0.5);
@@ -256,5 +283,12 @@ export default {
 .next-btn:disabled {
   background-color: rgb(17, 161, 26, 0.7);
   cursor: default;
+}
+
+.no-url-error {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
 }
 </style>
