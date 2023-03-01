@@ -4,5 +4,6 @@ export const useQuizStore = defineStore("quiz", {
   state: () => ({
     url: "",
     givenAnswers: [],
+    stopwatch: "",
   }),
 });
