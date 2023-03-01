@@ -205,6 +205,7 @@ export default {
   transition: box-shadow 0.3s, background-color 0.3s;
   position: relative;
   margin: 0.5rem 1rem;
+  text-transform: none;
 }
 
 .next-btn {
