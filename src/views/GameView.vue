@@ -8,15 +8,14 @@
         }"
       ></div>
       <p class="progress-text">
-        {{ currentQuestionNumber + "/" + selectedQuestionLength }}
+        {{ displayProgress + "/" + selectedQuestionLength }}
       </p>
     </div>
     <p class="stop-watch">{{ stopwatch }}</p>
-
     <form>
       <div class="wrapper">
         <div class="questions_wrapper">
-          <p>{{ currentQuestion.question }}</p>
+          <p v-html="currentQuestion.question"></p>
           <div class="checkbox-wrapper">
             <label
               v-for="answer of currentQuestion.answers"
@@ -28,15 +27,22 @@
                 :name="currentQuestion.question"
                 class="input-question"
                 :id="answer.id"
+                v-model="currentAnswer.selected"
+                :value="answer.id"
               />
               <div class="questions_label" v-html="answer.text"></div>
             </label>
           </div>
         </div>
       </div>
-      <button class="next-btn" @click.prevent="callNextQuestion">Next</button>
+      <button
+        class="next-btn"
+        @click.prevent="callNextQuestion"
+        :disabled="noAnswerSelected"
+      >
+        {{ buttonCaption }}
+      </button>
     </form>
-    {{ setOfQuestions }}
   </main>
 </template>
 
@@ -56,23 +62,50 @@ export default {
       stopwatch: "0:34",
       setOfQuestions: {},
       currentQuestion: {},
+      currentAnswer: {
+        id: "",
+        selected: [],
+      },
+      buttonCaption: "next",
     };
   },
   computed: {
+    noAnswerSelected() {
+      return this.currentAnswer.selected.length === 0 ? true : false;
+    },
+    displayProgress() {
+      return this.currentQuestionNumber + 1;
+    },
     getProgressValue() {
-      return (
-        (this.currentQuestionNumber / this.selectedQuestionLength) * 100 + "%"
-      );
+      return (this.displayProgress / this.selectedQuestionLength) * 100 + "%";
     },
   },
   methods: {
     callNextQuestion() {
-      this.currentQuestionNumber += 1;
-      this.currentQuestion =
-        this.setOfQuestions.data[this.currentQuestionNumber];
+      this.currentAnswer.id = this.currentQuestion.id;
+      this.store.givenAnswers.push(this.currentAnswer);
+      this.currentAnswer = {
+        id: "",
+        selected: [],
+      };
+      if (this.currentQuestionNumber != this.setOfQuestions.data.length - 1) {
+        this.currentQuestionNumber += 1;
+        this.currentQuestion =
+          this.setOfQuestions.data[this.currentQuestionNumber];
+        if (
+          this.currentQuestionNumber ===
+          this.setOfQuestions.data.length - 1
+        ) {
+          this.buttonCaption = "result";
+        }
+      } else {
+        this.$router.push({ name: "resultPage" });
+      }
     },
   },
-  // wir brauchen mounted, weil created bereits mit start der App geladen wird
+  /**
+   * Todo implement button to go to start page when page is refreshed = url empty (incl. message)
+   * */
   async created() {
     const response = await fetch(this.store.url);
     this.setOfQuestions = await response.json();
@@ -181,9 +214,19 @@ export default {
   padding: 1rem 2rem;
   transition: scale 0.2s ease-out;
   margin: 2rem;
+  cursor: pointer;
 }
 
 .next-btn:hover {
   scale: 1.1;
+}
+
+.next-btn:hover:disabled {
+  scale: 1;
+}
+
+.next-btn:disabled {
+  background-color: rgb(17, 161, 26, 0.7);
+  cursor: default;
 }
 </style>
