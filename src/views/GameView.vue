@@ -100,7 +100,7 @@ export default {
   methods: {
     callNextQuestion() {
       this.currentAnswer.id = this.currentQuestion.id;
-      this.store.givenAnswers.push(this.currentAnswer);
+      this.store.givenAnswers.data.push(this.currentAnswer);
       this.currentAnswer = {
         id: "",
         selected: [],
