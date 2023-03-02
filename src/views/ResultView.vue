@@ -51,15 +51,17 @@
         <!-- Answer information -->
         <div v-if="toggleAnswerDetails === 'right'" class="result-answer-info">
           <div v-for="question of getRightAnswers" :key="question.id">
-            <p class="result-answer-info_question">{{ question.question }}</p>
+            <p
+              class="result-answer-info_question"
+              v-html="question.question"
+            ></p>
             <ul>
               <li
                 class="result-answer-info_right"
                 v-for="select of question.selectedAnswers"
                 :key="question.answerDetails[select - 1].id"
-              >
-                {{ question.answerDetails[select - 1].text }}
-              </li>
+                v-html="question.answerDetails[select - 1].text"
+              ></li>
             </ul>
           </div>
         </div>
@@ -68,7 +70,10 @@
           class="result-answer-info"
         >
           <div v-for="question of getWrongAnswers" :key="question.id">
-            <p class="result-answer-info_question">{{ question.question }}:</p>
+            <p
+              class="result-answer-info_question"
+              v-html="question.question"
+            ></p>
             <ul>
               <li
                 class="result-answer-info_wrong"
@@ -385,7 +390,8 @@ response:
 }
 
 .result-wrapper_element-interactive {
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  cursor: pointer;
 }
 
 .result-wrapper_element-interactive:hover {
