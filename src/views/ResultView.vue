@@ -1,107 +1,113 @@
 <template>
   <main>
-    <!-- Result bar -->
-    <h2 class="result-percentage">{{ resultData.passedRatio }}</h2>
-    <div class="result-bar">
-      <div
-        class="result-bar_current"
-        :style="{
-          '--progress-value': resultData.passedRatio,
-        }"
-      ></div>
+    <div v-if="store.url">
+      <!-- Result bar -->
+      <h2 class="result-percentage">{{ resultData.passedRatio }}</h2>
+      <div class="result-bar">
+        <div
+          class="result-bar_current"
+          :style="{
+            '--progress-value': resultData.passedRatio,
+          }"
+        ></div>
+      </div>
+      <section class="result-text">
+        <h3 class="result-header">Well Done!</h3>
+
+        <!-- Result Infos -->
+        <div class="result-wrapper">
+          <div class="result-wrapper_element">
+            <h4 class="result-wrapper_element-h4">Time</h4>
+            <p class="result-wrapper_element-p">{{ store.stopwatch }}</p>
+          </div>
+          <div
+            class="result-wrapper_element result-wrapper_element-interactive"
+            @click="toggleAnswersRight"
+            :class="{
+              'result-wrapper_element-interactive--active':
+                toggleAnswerDetails === 'right',
+            }"
+          >
+            <h4 class="result-wrapper_element-h4">right</h4>
+            <p class="result-wrapper_element-p">
+              {{ resultData.result[0] }}
+            </p>
+          </div>
+          <div
+            class="result-wrapper_element result-wrapper_element-interactive"
+            @click="toggleAnswersWrong"
+            :class="{
+              'result-wrapper_element-interactive--active':
+                toggleAnswerDetails === 'wrong',
+            }"
+          >
+            <h4 class="result-wrapper_element-h4">wrong</h4>
+            <p class="result-wrapper_element-p">
+              {{ resultData.result[1] - resultData.result[0] }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Answer information -->
+        <div v-if="toggleAnswerDetails === 'right'" class="result-answer-info">
+          <div v-for="question of getRightAnswers" :key="question.id">
+            <p class="result-answer-info_question">{{ question.question }}</p>
+            <ul>
+              <li
+                class="result-answer-info_right"
+                v-for="select of question.selectedAnswers"
+                :key="question.answerDetails[select - 1].id"
+              >
+                {{ question.answerDetails[select - 1].text }}
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div
+          v-else-if="toggleAnswerDetails === 'wrong'"
+          class="result-answer-info"
+        >
+          <div v-for="question of getWrongAnswers" :key="question.id">
+            <p class="result-answer-info_question">{{ question.question }}:</p>
+            <ul>
+              <li
+                class="result-answer-info_wrong"
+                v-for="select of question.selectedAnswers"
+                :key="question.answerDetails[select - 1].id"
+                v-html="question.answerDetails[select - 1].text"
+              ></li>
+              <li
+                class="result-answer-info_right"
+                v-for="answer of question.answerDetails"
+                :key="answer.id"
+                v-show="answer.isValid"
+                v-html="answer.text"
+              ></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Result Message -->
+        <p v-if="getPassedRatioNumber === 100" class="result-description">
+          Wow you are very talented! I bet you can`t repeat that, can you?
+        </p>
+        <p
+          v-else-if="getPassedRatioNumber > 50 && getPassedRatioNumber < 100"
+          class="result-description"
+        >
+          That was already pretty good! Try it again to join the 100% club.
+        </p>
+        <p v-else-if="getPassedRatioNumber <= 50" class="result-description">
+          I know this wasn't easy, but I also know you’ve got what it takes to
+          get better.
+        </p>
+      </section>
+      <button class="new-btn" @click="newGame">New Game</button>
     </div>
-    <section class="result-text">
-      <h3 class="result-header">Well Done!</h3>
-
-      <!-- Result Infos -->
-      <div class="result-wrapper">
-        <div class="result-wrapper_element">
-          <h4 class="result-wrapper_element-h4">Time</h4>
-          <p class="result-wrapper_element-p">{{ store.stopwatch }}</p>
-        </div>
-        <div
-          class="result-wrapper_element result-wrapper_element-interactive"
-          @click="toggleAnswersRight"
-          :class="{
-            'result-wrapper_element-interactive--active':
-              toggleAnswerDetails === 'right',
-          }"
-        >
-          <h4 class="result-wrapper_element-h4">right</h4>
-          <p class="result-wrapper_element-p">
-            {{ resultData.result[0] }}
-          </p>
-        </div>
-        <div
-          class="result-wrapper_element result-wrapper_element-interactive"
-          @click="toggleAnswersWrong"
-          :class="{
-            'result-wrapper_element-interactive--active':
-              toggleAnswerDetails === 'wrong',
-          }"
-        >
-          <h4 class="result-wrapper_element-h4">wrong</h4>
-          <p class="result-wrapper_element-p">
-            {{ resultData.result[1] - resultData.result[0] }}
-          </p>
-        </div>
-      </div>
-
-      <!-- Answer information -->
-      <div v-if="toggleAnswerDetails === 'right'" class="result-answer-info">
-        <div v-for="question of getRightAnswers" :key="question.id">
-          <p class="result-answer-info_question">{{ question.question }}</p>
-          <ul>
-            <li
-              class="result-answer-info_right"
-              v-for="select of question.selectedAnswers"
-              :key="question.answerDetails[select - 1].id"
-            >
-              {{ question.answerDetails[select - 1].text }}
-            </li>
-          </ul>
-        </div>
-      </div>
-      <div
-        v-else-if="toggleAnswerDetails === 'wrong'"
-        class="result-answer-info"
-      >
-        <div v-for="question of getWrongAnswers" :key="question.id">
-          <p class="result-answer-info_question">{{ question.question }}:</p>
-          <ul>
-            <li
-              class="result-answer-info_wrong"
-              v-for="select of question.selectedAnswers"
-              :key="question.answerDetails[select - 1].id"
-              v-html="question.answerDetails[select - 1].text"
-            ></li>
-            <li
-              class="result-answer-info_right"
-              v-for="answer of question.answerDetails"
-              :key="answer.id"
-              v-show="answer.isValid"
-              v-html="answer.text"
-            ></li>
-          </ul>
-        </div>
-      </div>
-
-      <!-- Result Message -->
-      <p v-if="getPassedRatioNumber === 100" class="result-description">
-        Wow you are very talented! I bet you can`t repeat that, can you?
-      </p>
-      <p
-        v-else-if="getPassedRatioNumber > 50 && getPassedRatioNumber < 100"
-        class="result-description"
-      >
-        That was already pretty good! Try it again to join the 100% club.
-      </p>
-      <p v-else-if="getPassedRatioNumber <= 50" class="result-description">
-        I know this wasn't easy, but I also know you’ve got what it takes to get
-        better.
-      </p>
-    </section>
-    <button class="new-btn">New Game</button>
+    <div v-else class="no-url-error">
+      Sorry no data found
+      <p>redirection in: <br />{{ timer }}</p>
+    </div>
   </main>
 </template>
 
@@ -118,6 +124,8 @@ export default {
     return {
       resultData: {},
       toggleAnswerDetails: "",
+      timer: 5,
+      currentInterval: undefined,
     };
   },
   computed: {
@@ -150,19 +158,36 @@ export default {
         this.toggleAnswerDetails = "wrong";
       }
     },
+    newGame() {
+      this.$router.push({ name: "entryPage" });
+    },
   },
   async created() {
-    const response = await fetch(
-      "https://22-november.api.cbe.uber.space/quiz/result",
-      {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(this.store.givenAnswers),
+    try {
+      const response = await fetch(
+        "https://22-november.api.cbe.uber.space/quiz/result",
+        {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(this.store.givenAnswers),
+        }
+      );
+      const resultData = await response.json();
+      this.resultData = resultData;
+      console.log(resultData);
+    } catch {
+      this.currentInterval = setInterval(() => {
+        this.timer--;
+      }, 1000);
+    }
+  },
+  watch: {
+    timer(newV, oldV) {
+      if (newV < oldV && newV === 0) {
+        clearInterval(this.currentInterval);
+        this.$router.push({ name: "entryPage" });
       }
-    );
-    const resultData = await response.json();
-    this.resultData = resultData;
-    console.log(resultData);
+    },
   },
 };
 
@@ -338,8 +363,8 @@ response:
   place-content: center;
   grid-template: 0.3fr 1fr/95vw;
   margin: 2rem;
-  _opacity: 0;
-  _animation: text-pop-up-bottom 2s ease-in 2s forwards;
+  opacity: 0;
+  animation: text-pop-up-bottom 2s ease-in 2s forwards;
 }
 .result-header {
   color: rgb(227, 181, 5, 0.8);
@@ -452,12 +477,18 @@ response:
   border: none;
   border-radius: 2rem;
   padding: 1rem 2rem;
-  margin-top: 1rem;
   transition: scale 0.2s ease-out;
   opacity: 0;
   animation: text-pop-up-bottom 2s ease-in 2s forwards;
 }
 .new-btn:hover {
   scale: 1.1;
+}
+
+.no-url-error {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
 }
 </style>
