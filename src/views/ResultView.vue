@@ -436,7 +436,7 @@ response:
 }
 
 .result-answer-info_right {
-  color: green;
+  color: rgb(17, 161, 26);
   text-transform: none;
 }
 
