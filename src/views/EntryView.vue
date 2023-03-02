@@ -80,6 +80,7 @@ export default {
       this[id] = selection;
     },
     startGame() {
+      this.store.givenAnswers.data = [];
       this.store.url = this.url;
       this.$router.push({
         name: "gamePage",
