@@ -91,7 +91,9 @@ export default {
       return this.currentQuestionNumber + 1;
     },
     getProgressValue() {
-      return (this.displayProgress / this.selectedQuestionLength) * 100 + "%";
+      return (
+        (this.currentQuestionNumber / this.selectedQuestionLength) * 100 + "%"
+      );
     },
     getStopwatchSeconds() {
       return this.stopwatch.sec;
@@ -220,7 +222,7 @@ export default {
   grid-template: 1fr 1fr 1fr 1fr/1fr;
 }
 
-@media screen and (min-width: 450px) {
+@media screen and (min-width: 500px) {
   .checkbox-wrapper {
     grid-template: 1fr 1fr /1fr 1fr;
   }
@@ -259,6 +261,7 @@ export default {
   position: relative;
   margin: 0.5rem 1rem;
   text-transform: none;
+  word-break: break-word;
 }
 
 .next-btn {
