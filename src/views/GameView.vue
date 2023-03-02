@@ -39,14 +39,14 @@
               </label>
             </div>
           </div>
+          <button
+            class="next-btn"
+            @click.prevent="callNextQuestion"
+            :disabled="noAnswerSelected"
+          >
+            {{ buttonCaption }}
+          </button>
         </div>
-        <button
-          class="next-btn"
-          @click.prevent="callNextQuestion"
-          :disabled="noAnswerSelected"
-        >
-          {{ buttonCaption }}
-        </button>
       </form>
     </div>
     <div v-else class="no-url-error">
@@ -207,7 +207,6 @@ export default {
 .wrapper {
   display: grid;
   place-content: center;
-  height: 60vh;
 }
 
 .questions_wrapper {
@@ -270,6 +269,8 @@ export default {
   transition: scale 0.2s ease-out;
   margin: 2rem;
   cursor: pointer;
+  width: fit-content;
+  justify-self: center;
 }
 
 .next-btn:hover {
