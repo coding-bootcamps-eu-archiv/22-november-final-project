@@ -151,7 +151,7 @@ export default {
   },
   watch: {
     getStopwatchSeconds(newV, oldV) {
-      if (newV < oldV && newV === 0) {
+      if (newV < oldV && newV === -1) {
         clearInterval(this.currentInterval);
         this.$router.push({ name: "entryPage" });
       }
