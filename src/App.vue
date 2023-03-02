@@ -43,6 +43,7 @@ body {
   background-size: 100vw 100vh, 550px 550px, 350px 350px, 250px 250px,
     150px 150px;
   background-position: 0 0, 40px 60px, 130px 270px, 70px 100px, 0px 100px;
+  background-attachment: fixed;
 }
 #app {
   text-align: center;
