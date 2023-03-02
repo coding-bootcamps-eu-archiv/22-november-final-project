@@ -1,5 +1,6 @@
 <template>
   <main>
+    <!-- Result bar -->
     <h2 class="result-percentage">{{ resultData.passedRatio }}</h2>
     <div class="result-bar">
       <div
@@ -11,11 +12,93 @@
     </div>
     <section class="result-text">
       <h3 class="result-header">Well Done!</h3>
-      <p class="result-description">
-        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Molestias ad
-        totam nihil voluptatum placeat, quidem doloremque doloribus minima
-        debitis aliquam maxime alias accusamus quam fugiat, vitae repudiandae,
-        temporibus minus veritatis.
+
+      <!-- Result Infos -->
+      <div class="result-wrapper">
+        <div class="result-wrapper_element">
+          <h4 class="result-wrapper_element-h4">Time</h4>
+          <p class="result-wrapper_element-p">{{ store.stopwatch }}</p>
+        </div>
+        <div
+          class="result-wrapper_element result-wrapper_element-interactive"
+          @click="toggleAnswersRight"
+          :class="{
+            'result-wrapper_element-interactive--active':
+              toggleAnswerDetails === 'right',
+          }"
+        >
+          <h4 class="result-wrapper_element-h4">right</h4>
+          <p class="result-wrapper_element-p">
+            {{ resultData.result[0] }}
+          </p>
+        </div>
+        <div
+          class="result-wrapper_element result-wrapper_element-interactive"
+          @click="toggleAnswersWrong"
+          :class="{
+            'result-wrapper_element-interactive--active':
+              toggleAnswerDetails === 'wrong',
+          }"
+        >
+          <h4 class="result-wrapper_element-h4">wrong</h4>
+          <p class="result-wrapper_element-p">
+            {{ resultData.result[1] - resultData.result[0] }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Answer information -->
+      <div v-if="toggleAnswerDetails === 'right'" class="result-answer-info">
+        <div v-for="question of getRightAnswers" :key="question.id">
+          <p class="result-answer-info_question">{{ question.question }}</p>
+          <ul>
+            <li
+              class="result-answer-info_right"
+              v-for="select of question.selectedAnswers"
+              :key="question.answerDetails[select - 1].id"
+            >
+              {{ question.answerDetails[select - 1].text }}
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div
+        v-else-if="toggleAnswerDetails === 'wrong'"
+        class="result-answer-info"
+      >
+        <div v-for="question of getWrongAnswers" :key="question.id">
+          <p class="result-answer-info_question">{{ question.question }}:</p>
+          <ul>
+            <li
+              class="result-answer-info_wrong"
+              v-for="select of question.selectedAnswers"
+              :key="question.answerDetails[select - 1].id"
+              v-html="question.answerDetails[select - 1].text"
+            ></li>
+            <li
+              class="result-answer-info_right"
+              v-for="answer of question.answerDetails"
+              :key="answer.id"
+              v-show="answer.isValid"
+              v-html="answer.text"
+            ></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Result Message -->
+      <p v-if="getPassedRatioNumber === 100" class="result-description">
+        Wow you are very talented! I bet you can`t repeat that, can you?
+      </p>
+      <p
+        v-else-if="getPassedRatioNumber > 50 && getPassedRatioNumber < 100"
+        class="result-description"
+      >
+        That was already pretty good! Try it again to join the 100% club.
+      </p>
+      <p v-else-if="getPassedRatioNumber <= 50" class="result-description">
+        I know this wasn't easy, but I also know you’ve got what it takes to get
+        better.
       </p>
     </section>
     <button class="new-btn">New Game</button>
@@ -34,7 +117,39 @@ export default {
   data() {
     return {
       resultData: {},
+      toggleAnswerDetails: "",
     };
+  },
+  computed: {
+    getPassedRatioNumber() {
+      return +this.resultData.passedRatio.split("").slice(0, -1).join("");
+    },
+    getRightAnswers() {
+      return this.resultData.details.filter((question) => {
+        return question.isCorrect;
+      });
+    },
+    getWrongAnswers() {
+      return this.resultData.details.filter((question) => {
+        return !question.isCorrect;
+      });
+    },
+  },
+  methods: {
+    toggleAnswersRight() {
+      if (this.toggleAnswerDetails === "right") {
+        this.toggleAnswerDetails = "";
+      } else {
+        this.toggleAnswerDetails = "right";
+      }
+    },
+    toggleAnswersWrong() {
+      if (this.toggleAnswerDetails === "wrong") {
+        this.toggleAnswerDetails = "";
+      } else {
+        this.toggleAnswerDetails = "wrong";
+      }
+    },
   },
   async created() {
     const response = await fetch(
@@ -42,19 +157,7 @@ export default {
       {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          elapsedTime: 180,
-          data: [
-            {
-              id: "0dcbdd75-ce3a-48a7-89b2-4707ad6818e1",
-              selected: [3],
-            },
-            {
-              id: "1b54d1f0-aaef-4e1f-b7c4-d153afcd60db",
-              selected: [0],
-            },
-          ],
-        }),
+        body: JSON.stringify(this.store.givenAnswers),
       }
     );
     const resultData = await response.json();
@@ -64,7 +167,7 @@ export default {
 };
 
 /*
-valid Body: 
+valid Body:
     {
         elapsedTime: 180,
         data: [
@@ -77,9 +180,9 @@ valid Body:
             selected: [2],
           },
         ],
-      } 
+      }
 
-      
+
 response:
 {
     "elapsedTime": 180,
@@ -194,13 +297,6 @@ response:
   animation: slide-in-left 2s ease-out;
 }
 
-@media screen and (min-width: 450px) {
-  .result-bar,
-  .result-bar_current {
-    height: 1.5rem;
-  }
-}
-
 @keyframes text-pop-up-top {
   0% {
     transform: translateY(0);
@@ -232,7 +328,7 @@ response:
 
 .result-percentage {
   color: rgb(227, 181, 5);
-  font-size: 4rem;
+  font-size: 3rem;
   opacity: 0;
   animation: text-pop-up-top 2s ease-in 1s forwards;
 }
@@ -240,19 +336,115 @@ response:
 .result-text {
   display: grid;
   place-content: center;
-  grid-template: 0.3fr 1fr/70vw;
+  grid-template: 0.3fr 1fr/95vw;
   margin: 2rem;
-  opacity: 0;
-  animation: text-pop-up-bottom 2s ease-in 2s forwards;
+  _opacity: 0;
+  _animation: text-pop-up-bottom 2s ease-in 2s forwards;
 }
 .result-header {
   color: rgb(227, 181, 5, 0.8);
   font-size: 1.5rem;
   text-decoration: underline;
 }
-.result-description {
-  color: rgb(255, 255, 255, 0.6);
+
+.result-wrapper {
+  display: flex;
+  justify-content: space-around;
+}
+
+.result-wrapper_element {
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 1rem;
+  padding-inline: 1rem;
+  min-width: 20vw;
+}
+
+.result-wrapper_element-interactive {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.result-wrapper_element-interactive:hover {
+  background-color: rgb(255, 255, 255, 0.3);
+}
+.result-wrapper_element-interactive--active {
+  box-shadow: inset 0 0 5px white, 0 0 10px white, 0 0 20px white;
+}
+
+.result-wrapper_element-h4 {
+  font-weight: 500;
+  font-size: 1rem;
+  margin-block: 0.6rem;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.result-wrapper_element-p {
+  color: rgba(255, 255, 255, 0.7);
+  margin-block: 0;
+}
+
+.result-answer-info {
+  background-color: rgba(0, 0, 0, 0.3);
+  margin: 1rem;
+  padding: 1rem;
+  border-radius: 1rem;
+  text-align: start;
+  width: fit-content;
+}
+
+.result-answer-info_question,
+.result-answer-info_right,
+.result-answer-info_wrong {
+  font-size: 0.75rem;
+}
+.result-answer-info_wrong {
+  color: red;
   text-transform: none;
+  list-style-type: circle;
+}
+
+.result-answer-info_wrong::marker {
+  content: "\2718  ";
+}
+
+.result-answer-info_right::marker {
+  content: "\2713  ";
+}
+
+.result-answer-info_right {
+  color: green;
+  text-transform: none;
+}
+
+@media screen and (min-width: 450px) {
+  .result-bar,
+  .result-bar_current {
+    height: 1.5rem;
+  }
+  .result-percentage {
+    font-size: 4rem;
+  }
+
+  .result-answer-info_question,
+  .result-answer-info_right,
+  .result-answer-info_wrong {
+    font-size: 1rem;
+  }
+}
+
+@media screen and (min-width: 500px) {
+  .result-text {
+    grid-template-columns: 70vw;
+  }
+  .result-wrapper_element-h4 {
+    font-size: 1rem;
+  }
+}
+
+.result-description {
+  margin-top: 2rem;
+  color: rgb(255, 255, 255, 0.7);
+  _text-transform: none;
+  font-size: 1rem;
 }
 
 .new-btn {
@@ -260,8 +452,12 @@ response:
   border: none;
   border-radius: 2rem;
   padding: 1rem 2rem;
+  margin-top: 1rem;
   transition: scale 0.2s ease-out;
   opacity: 0;
   animation: text-pop-up-bottom 2s ease-in 2s forwards;
+}
+.new-btn:hover {
+  scale: 1.1;
 }
 </style>
