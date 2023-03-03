@@ -1,6 +1,6 @@
 <template>
-  <main>
-    <div v-if="store.url">
+  <div v-if="store.url">
+    <main>
       <!-- Result bar -->
       <h2 class="result-percentage">{{ resultData.passedRatio }}</h2>
       <div class="result-bar">
@@ -11,11 +11,11 @@
           }"
         ></div>
       </div>
-      <section class="result-text">
+      <div class="result-text">
         <h3 class="result-header">Well Done!</h3>
 
         <!-- Result Infos -->
-        <div class="result-wrapper">
+        <section class="result-wrapper">
           <div class="result-wrapper_element">
             <h4 class="result-wrapper_element-h4">Time</h4>
             <p class="result-wrapper_element-p">{{ store.stopwatch }}</p>
@@ -46,10 +46,13 @@
               {{ resultData.result[1] - resultData.result[0] }}
             </p>
           </div>
-        </div>
+        </section>
 
         <!-- Answer information -->
-        <div v-if="toggleAnswerDetails === 'right'" class="result-answer-info">
+        <section
+          v-if="toggleAnswerDetails === 'right'"
+          class="result-answer-info"
+        >
           <div v-for="question of getRightAnswers" :key="question.id">
             <p class="result-answer-info_question">{{ question.question }}</p>
             <ul>
@@ -62,8 +65,8 @@
               </li>
             </ul>
           </div>
-        </div>
-        <div
+        </section>
+        <section
           v-else-if="toggleAnswerDetails === 'wrong'"
           class="result-answer-info"
         >
@@ -85,30 +88,34 @@
               ></li>
             </ul>
           </div>
-        </div>
+        </section>
 
         <!-- Result Message -->
-        <p v-if="getPassedRatioNumber === 100" class="result-description">
-          Wow you are very talented! I bet you can`t repeat that, can you?
-        </p>
-        <p
-          v-else-if="getPassedRatioNumber > 50 && getPassedRatioNumber < 100"
-          class="result-description"
-        >
-          That was already pretty good! Try it again to join the 100% club.
-        </p>
-        <p v-else-if="getPassedRatioNumber <= 50" class="result-description">
-          I know this wasn't easy, but I also know you’ve got what it takes to
-          get better.
-        </p>
-      </section>
+        <section>
+          <p v-if="getPassedRatioNumber === 100" class="result-description">
+            Wow you are very talented! I bet you can`t repeat that, can you?
+          </p>
+          <p
+            v-else-if="getPassedRatioNumber > 50 && getPassedRatioNumber < 100"
+            class="result-description"
+          >
+            That was already pretty good! Try it again to join the 100% club.
+          </p>
+          <p v-else class="result-description">
+            I know this wasn't easy, but I also know you’ve got what it takes to
+            get better.
+          </p>
+        </section>
+      </div>
       <button class="new-btn" @click="newGame">New Game</button>
-    </div>
-    <div v-else class="no-url-error">
+    </main>
+  </div>
+  <div v-else class="no-url-error">
+    <main>
       Sorry no data found
       <p>redirection in: <br />{{ timer }}</p>
-    </div>
-  </main>
+    </main>
+  </div>
 </template>
 
 <script>
