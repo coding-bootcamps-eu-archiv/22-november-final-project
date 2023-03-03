@@ -26,6 +26,8 @@
             :class="{
               'result-wrapper_element-interactive--active':
                 toggleAnswerDetails === 'right',
+              'result-wrapper_element-interactive--empty':
+                getRightAnswers.length === 0,
             }"
           >
             <h4 class="result-wrapper_element-h4">right</h4>
@@ -39,6 +41,8 @@
             :class="{
               'result-wrapper_element-interactive--active':
                 toggleAnswerDetails === 'wrong',
+              'result-wrapper_element-interactive--empty':
+                getWrongAnswers.length === 0,
             }"
           >
             <h4 class="result-wrapper_element-h4">wrong</h4>
@@ -399,6 +403,11 @@ response:
 }
 .result-wrapper_element-interactive--active {
   box-shadow: inset 0 0 5px white, 0 0 10px white, 0 0 20px white;
+}
+
+.result-wrapper_element-interactive--empty {
+  pointer-events: none;
+  box-shadow: none;
 }
 
 .result-wrapper_element-h4 {
