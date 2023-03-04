@@ -1,6 +1,5 @@
 <template>
   <main>
-    <br />
     <h1>Time for a Quiz</h1>
     <p>please select</p>
     <form>
@@ -91,6 +90,10 @@ export default {
 </script>
 
 <style>
+h1 {
+  margin-top: 3rem;
+}
+
 p {
   color: rgb(227, 181, 5);
 }
