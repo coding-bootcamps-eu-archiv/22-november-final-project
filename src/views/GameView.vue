@@ -145,6 +145,13 @@ export default {
       }, 1000);
     }
 
+    if (this.currentQuestionNumber === 0) {
+      this.store.givenAnswers = {
+        elapsedTime: 180,
+        data: [],
+      };
+    }
+
     const response = await fetch(this.store.url);
     this.setOfQuestions = await response.json();
     this.selectedQuestionLength = this.setOfQuestions.numberOfItems;
