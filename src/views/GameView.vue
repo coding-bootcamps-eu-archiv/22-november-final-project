@@ -37,7 +37,7 @@
                   v-model="currentAnswer.selected"
                   :value="answer.id"
                 />
-                <p class="questions_label" v-html="answer.text"></p>
+                <p class="questions_label-game" v-html="answer.text"></p>
               </label>
             </div>
           </div>
@@ -266,7 +266,7 @@ export default {
 .input-question:hover ~ .questions_label {
   background-color: rgb(255, 255, 255, 0.3);
 }
-.questions_label {
+.questions_label-game {
   color: white;
   padding: 0.5rem 1rem;
   border-radius: 2rem;
