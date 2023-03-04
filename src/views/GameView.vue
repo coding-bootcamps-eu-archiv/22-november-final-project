@@ -260,10 +260,10 @@ export default {
   display: none;
 }
 
-.input-question:checked ~ .questions_label {
+.input-question:checked ~ .questions_label-game {
   box-shadow: inset 0 0 5px white, 0 0 10px white, 0 0 20px white;
 }
-.input-question:hover ~ .questions_label {
+.input-question:hover ~ .questions_label-game {
   background-color: rgb(255, 255, 255, 0.3);
 }
 .questions_label-game {
