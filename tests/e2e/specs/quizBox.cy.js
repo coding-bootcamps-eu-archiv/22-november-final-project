@@ -5,7 +5,7 @@ describe("Quiz App", () => {
   beforeEach(() => {
     cy.visit("https://quiz-app-cbe.netlify.app/");
   });
-  it.only("completes one entire quiz round, checks results and starts over", () => {
+  it("completes one entire quiz round, checks results and starts over", () => {
     //EntryPage
     cy.contains("5").click();
     cy.contains("HTML and CSS").click();
