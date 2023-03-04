@@ -1,6 +1,6 @@
 <template>
-  <main>
-    <div v-if="store.url">
+  <div v-if="store.url">
+    <header>
       <div class="progress-bar">
         <div
           class="progress-bar_current"
@@ -9,7 +9,7 @@
           }"
         ></div>
         <p class="progress-text">
-          {{ displayProgress + "/" + selectedQuestionLength }}
+          {{ progressText }}
         </p>
       </div>
       <p class="stop-watch">
@@ -17,6 +17,8 @@
         <span class="stop-watch_span" v-if="stopwatch.sec < 10">0</span
         >{{ stopwatch.sec }}
       </p>
+    </header>
+    <main>
       <form>
         <div class="wrapper">
           <div class="questions_wrapper">
@@ -48,12 +50,14 @@
           </button>
         </div>
       </form>
-    </div>
-    <div v-else class="no-url-error">
+    </main>
+  </div>
+  <div v-else class="no-url-error">
+    <main>
       Sorry no data found
       <p>redirection in: <br />{{ stopwatch.sec }}</p>
-    </div>
-  </main>
+    </main>
+  </div>
 </template>
 
 <script>
@@ -89,6 +93,9 @@ export default {
     },
     displayProgress() {
       return this.currentQuestionNumber + 1;
+    },
+    progressText() {
+      return this.displayProgress + "/" + this.selectedQuestionLength;
     },
     getProgressValue() {
       return (
