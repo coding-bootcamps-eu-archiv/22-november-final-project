@@ -407,6 +407,7 @@ response:
 .result-wrapper_element-interactive {
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
   cursor: pointer;
+  transition: background-color 0.3s;
 }
 
 .result-wrapper_element-interactive-notificator::before {
