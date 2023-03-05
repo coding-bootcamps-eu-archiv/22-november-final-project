@@ -35,10 +35,10 @@
       <thead>
         <tr>
           <th></th>
-          <th>name</th>
-          <th>time</th>
-          <th>right</th>
-          <th>score</th>
+          <th class="score-table_th">name</th>
+          <th class="score-table_th">time</th>
+          <th class="score-table_th">right</th>
+          <th class="score-table_th">score</th>
         </tr>
       </thead>
       <tbody>
@@ -47,11 +47,13 @@
           <td colspan="4"><hr /></td>
         </tr>
         <tr v-for="(gamer, index) of toggleHighscoreDetails" :key="gamer.id">
-          <td>{{ index + 1 }}.</td>
-          <td>{{ gamer.name }}</td>
-          <td>{{ gamer.elapsedTime }}</td>
-          <td>{{ gamer.result[0] }} / {{ gamer.result[1] }}</td>
-          <td>{{ gamer.highscore }}</td>
+          <td class="score-table_td">{{ index + 1 }}.</td>
+          <td class="score_gamer-name score-table_td">{{ gamer.name }}</td>
+          <td class="score-table_td">{{ gamer.elapsedTime }}</td>
+          <td class="score-table_td">
+            {{ gamer.result[0] }} / {{ gamer.result[1] }}
+          </td>
+          <td class="score-table_td">{{ gamer.highscore }}</td>
         </tr>
       </tbody>
     </table>
@@ -69,7 +71,7 @@ export default {
       gamer: [
         {
           id: "9b2e970b-307a-4754-a35e-4e16ecc8d65b",
-          name: "JohnDoe",
+          name: "JohnDoesartfhgdfewretgdfweretgdfrwwtegdfsrw3teg",
           amountOfQuestions: 5,
           elapsedTime: 500,
           passedRatio: "100%",
@@ -143,7 +145,8 @@ export default {
   display: grid;
   background-color: rgba(0, 0, 0, 0.3);
   border-radius: 1rem;
-  padding-inline: 1rem;
+  padding-inline: 0.3rem;
+  max-width: 100vw;
 }
 
 .highscore-type_wrapper {
@@ -169,8 +172,36 @@ export default {
 
 .score-table {
   background-color: rgba(0, 0, 0, 0.3);
-  padding: 1rem;
+  padding: 0.2rem;
   border-radius: 1rem;
   margin-bottom: 1rem;
+}
+
+.score_gamer-name {
+  text-transform: none;
+  word-break: break-all;
+}
+
+.score-table_th {
+  font-size: 0.7rem;
+}
+
+.score-table_td {
+  font-size: 1rem;
+}
+
+@media screen and (min-width: 500px) {
+  .score-table {
+    padding-inline: 1rem;
+  }
+  .highscore-wrapper {
+    padding-inline: 1rem;
+  }
+  .score-table_th {
+    font-size: inherit;
+  }
+  .score-table_td {
+    font-size: inherit;
+  }
 }
 </style>
