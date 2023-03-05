@@ -37,7 +37,7 @@
                   v-model="currentAnswer.selected"
                   :value="answer.id"
                 />
-                <p class="questions_label" v-html="answer.text"></p>
+                <p class="questions_label-game" v-html="answer.text"></p>
               </label>
             </div>
           </div>
@@ -143,6 +143,13 @@ export default {
       this.currentInterval = setInterval(() => {
         this.stopwatch.sec--;
       }, 1000);
+    }
+
+    if (this.currentQuestionNumber === 0) {
+      this.store.givenAnswers = {
+        elapsedTime: 180,
+        data: [],
+      };
     }
 
     const response = await fetch(this.store.url);
@@ -253,13 +260,13 @@ export default {
   display: none;
 }
 
-.input-question:checked ~ .questions_label {
+.input-question:checked ~ .questions_label-game {
   box-shadow: inset 0 0 5px white, 0 0 10px white, 0 0 20px white;
 }
-.input-question:hover ~ .questions_label {
+.input-question:hover ~ .questions_label-game {
   background-color: rgb(255, 255, 255, 0.3);
 }
-.questions_label {
+.questions_label-game {
   color: white;
   padding: 0.5rem 1rem;
   border-radius: 2rem;

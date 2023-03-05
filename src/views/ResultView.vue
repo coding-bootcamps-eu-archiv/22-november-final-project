@@ -21,12 +21,18 @@
             <p class="result-wrapper_element-p">{{ store.stopwatch }}</p>
           </div>
           <div
-            class="result-wrapper_element result-wrapper_element-interactive"
-            @click="toggleAnswersRight"
+            class="result-wrapper_element"
+            @click="toggleAnswers('right')"
             :class="{
               'result-wrapper_element-interactive--active':
                 toggleAnswerDetails === 'right',
+              'result-wrapper_element-interactive--empty':
+                getRightAnswers.length === 0,
+              'result-wrapper_element-interactive': getRightAnswers.length > 0,
+              'result-wrapper_element-interactive-notificator':
+                showNotificatorRight,
             }"
+            @click.once="showNotificatorRight = false"
           >
             <h4 class="result-wrapper_element-h4">right</h4>
             <p class="result-wrapper_element-p">
@@ -34,12 +40,18 @@
             </p>
           </div>
           <div
-            class="result-wrapper_element result-wrapper_element-interactive"
-            @click="toggleAnswersWrong"
+            class="result-wrapper_element"
+            @click="toggleAnswers('wrong')"
             :class="{
               'result-wrapper_element-interactive--active':
                 toggleAnswerDetails === 'wrong',
+              'result-wrapper_element-interactive--empty':
+                getWrongAnswers.length === 0,
+              'result-wrapper_element-interactive': getWrongAnswers.length > 0,
+              'result-wrapper_element-interactive-notificator':
+                showNotificatorWrong,
             }"
+            @click.once="showNotificatorWrong = false"
           >
             <h4 class="result-wrapper_element-h4">wrong</h4>
             <p class="result-wrapper_element-p">
@@ -54,15 +66,17 @@
           class="result-answer-info"
         >
           <div v-for="question of getRightAnswers" :key="question.id">
-            <p class="result-answer-info_question">{{ question.question }}</p>
+            <p
+              class="result-answer-info_question"
+              v-html="question.question"
+            ></p>
             <ul>
               <li
                 class="result-answer-info_right"
                 v-for="select of question.selectedAnswers"
                 :key="question.answerDetails[select - 1].id"
-              >
-                {{ question.answerDetails[select - 1].text }}
-              </li>
+                v-html="question.answerDetails[select - 1].text"
+              ></li>
             </ul>
           </div>
         </section>
@@ -71,7 +85,10 @@
           class="result-answer-info"
         >
           <div v-for="question of getWrongAnswers" :key="question.id">
-            <p class="result-answer-info_question">{{ question.question }}:</p>
+            <p
+              class="result-answer-info_question"
+              v-html="question.question"
+            ></p>
             <ul>
               <li
                 class="result-answer-info_wrong"
@@ -133,6 +150,8 @@ export default {
       toggleAnswerDetails: "",
       timer: 5,
       currentInterval: undefined,
+      showNotificatorRight: true,
+      showNotificatorWrong: true,
     };
   },
   computed: {
@@ -151,18 +170,11 @@ export default {
     },
   },
   methods: {
-    toggleAnswersRight() {
-      if (this.toggleAnswerDetails === "right") {
+    toggleAnswers(text) {
+      if (this.toggleAnswerDetails === text) {
         this.toggleAnswerDetails = "";
       } else {
-        this.toggleAnswerDetails = "right";
-      }
-    },
-    toggleAnswersWrong() {
-      if (this.toggleAnswerDetails === "wrong") {
-        this.toggleAnswerDetails = "";
-      } else {
-        this.toggleAnswerDetails = "wrong";
+        this.toggleAnswerDetails = text;
       }
     },
     newGame() {
@@ -389,10 +401,27 @@ response:
   border-radius: 1rem;
   padding-inline: 1rem;
   min-width: 20vw;
+  position: relative;
 }
 
 .result-wrapper_element-interactive {
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.result-wrapper_element-interactive-notificator::before {
+  content: "!";
+  font-size: 1rem;
+  color: rgb(255, 255, 255, 0.7);
+  height: 1.1rem;
+  aspect-ratio: 1;
+  position: absolute;
+  right: 10%;
+  top: -10%;
+  border-radius: 2rem;
+  box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.7);
+  background-color: rgba(0, 0, 0, 0.3);
 }
 
 .result-wrapper_element-interactive:hover {
@@ -400,6 +429,14 @@ response:
 }
 .result-wrapper_element-interactive--active {
   box-shadow: inset 0 0 5px white, 0 0 10px white, 0 0 20px white;
+}
+
+.result-wrapper_element-interactive--empty {
+  pointer-events: none;
+}
+
+.result-wrapper_element-interactive--empty::before {
+  display: none;
 }
 
 .result-wrapper_element-h4 {
