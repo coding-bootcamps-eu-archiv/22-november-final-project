@@ -46,7 +46,11 @@
           <td></td>
           <td colspan="4"><hr /></td>
         </tr>
-        <tr v-for="(gamer, index) of toggleHighscoreDetails" :key="gamer.id">
+        <tr
+          v-for="(gamer, index) of toggleHighscoreDetails"
+          :key="gamer.id"
+          :class="{ 'score-table_td-current': gamer.id === store.highscoreID }"
+        >
           <td class="score-table_td">{{ index + 1 }}.</td>
           <td class="score_gamer-name score-table_td">{{ gamer.name }}</td>
           <td class="score-table_td">{{ gamer.elapsedTime }}</td>
@@ -61,23 +65,20 @@
 </template>
 
 <script>
+import { useQuizStore } from "@/stores/quizStore.js";
+
 export default {
   name: "HighscoreView",
+  setup() {
+    const store = useQuizStore();
+    return { store };
+  },
   data() {
     return {
       currentHighscoreType: 5,
       highscoreData: [],
       sortedHighscoreData: [],
-      gamer: [
-        {
-          id: "9b2e970b-307a-4754-a35e-4e16ecc8d65b",
-          name: "JohnDoesartfhgdfewretgdfweretgdfrwwtegdfsrw3teg",
-          amountOfQuestions: 5,
-          elapsedTime: 500,
-          passedRatio: "100%",
-          result: [3, 5],
-        },
-      ],
+      currentEntry: "",
     };
   },
   computed: {
@@ -127,6 +128,12 @@ export default {
         );
       });
     },
+    getCurrentEntry() {
+      this.currentEntry = this.highscoreData.filter((game) => {
+        return game.id === this.store.highscoreID;
+      })[0];
+      this.currentHighscoreType = this.currentEntry.total;
+    },
   },
   async created() {
     const response = await fetch(
@@ -136,6 +143,9 @@ export default {
     this.highscoreData = highscoreData;
     this.getHighscoreScore();
     this.sortByHighscore();
+    if (this.store.highscoreID) {
+      this.getCurrentEntry();
+    }
   },
 };
 </script>
@@ -188,6 +198,11 @@ export default {
 
 .score-table_td {
   font-size: 1rem;
+}
+
+.score-table_td-current > td {
+  color: rgb(227, 181, 5);
+  box-shadow: inset 0 0 5px white, 0 0 10px white, 0 0 20px white;
 }
 
 @media screen and (min-width: 500px) {

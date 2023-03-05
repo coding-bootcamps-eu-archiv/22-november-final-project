@@ -202,7 +202,7 @@ export default {
     newGame() {
       this.$router.push({ name: "entryPage" });
     },
-    sendHighscore() {
+    async sendHighscore() {
       if (this.userName) {
         const highscoreData = this.resultData;
         delete highscoreData.details;
@@ -210,7 +210,16 @@ export default {
 
         localStorage.setItem("userName", JSON.stringify(this.userName));
 
-        console.log(highscoreData);
+        const response = await fetch(
+          "https://22-november.api.cbe.uber.space/highscore",
+          {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify(highscoreData),
+          }
+        );
+        const data = await response.json();
+        this.store.highscoreID = data.id;
         this.$router.push({ name: "highscorePage" });
       }
     },
