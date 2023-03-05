@@ -36,8 +36,8 @@ export default {
   name: "LoginModal",
   data() {
     return {
-      username: "",
-      password: "",
+      username: "Tim",
+      password: "cbe-November-2022",
       errorMessage: "",
       isError: false,
     };
@@ -122,7 +122,7 @@ button:hover {
   aspect-ratio: 2/1;
   padding: 2rem;
 
-  background-color: rgba(0, 139, 139, 0.98);
+  background-color: rgba(33, 40, 66, 0.97);
   border-radius: 1rem;
 }
 
