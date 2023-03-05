@@ -13,9 +13,7 @@
         </p>
       </div>
       <p class="stop-watch">
-        {{ stopwatch.min + ":" }}
-        <span class="stop-watch_span" v-if="stopwatch.sec < 10">0</span
-        >{{ stopwatch.sec }}
+        {{ stopwatch }}
       </p>
     </header>
     <main>
@@ -55,7 +53,7 @@
   <div v-else class="no-url-error">
     <main>
       Sorry no data found
-      <p>redirection in: <br />{{ stopwatch.sec }}</p>
+      <p>redirection in: <br />{{ elapsedTime }}</p>
     </main>
   </div>
 </template>
@@ -73,10 +71,9 @@ export default {
     return {
       currentQuestionNumber: 0,
       selectedQuestionLength: 15,
-      stopwatch: {
-        min: 0,
-        sec: 0,
-      },
+      elapsedTime: 0,
+      stopwatch: "0:00",
+      minute: 0,
       currentInterval: undefined,
       setOfQuestions: {},
       currentQuestion: {},
@@ -102,9 +99,6 @@ export default {
         (this.currentQuestionNumber / this.selectedQuestionLength) * 100 + "%"
       );
     },
-    getStopwatchSeconds() {
-      return this.stopwatch.sec;
-    },
   },
   methods: {
     callNextQuestion() {
@@ -127,27 +121,24 @@ export default {
       } else {
         clearInterval(this.currentInterval);
 
-        let second = this.stopwatch.sec;
-        if (second < 10) {
-          second = "0" + second;
-        }
-        this.store.stopwatch = this.stopwatch.min + ":" + second;
+        this.store.stopwatch = this.stopwatch;
+        this.store.givenAnswers.elapsedTime = this.elapsedTime;
         this.$router.push({ name: "resultPage" });
       }
     },
   },
   async created() {
     if (!this.store.url) {
-      this.stopwatch.sec = 5;
+      this.elapsedTime = 5;
 
       this.currentInterval = setInterval(() => {
-        this.stopwatch.sec--;
+        this.elapsedTime--;
       }, 1000);
     }
 
     if (this.currentQuestionNumber === 0) {
       this.store.givenAnswers = {
-        elapsedTime: 180,
+        elapsedTime: 0,
         data: [],
       };
     }
@@ -158,16 +149,20 @@ export default {
     this.currentQuestion = this.setOfQuestions.data[this.currentQuestionNumber];
 
     this.currentInterval = setInterval(() => {
-      this.stopwatch.sec++;
-      if (this.stopwatch.sec === 60) {
-        this.stopwatch.min++;
-        this.stopwatch.sec = 0;
+      this.elapsedTime++;
+      let second = this.elapsedTime % 60;
+      if (second < 10) {
+        second = "0" + second;
       }
+      if (this.elapsedTime % 60 === 0) {
+        this.minute++;
+      }
+      this.stopwatch = this.minute + ":" + second;
     }, 1000);
   },
   watch: {
-    getStopwatchSeconds(newV, oldV) {
-      if (newV < oldV && newV === -1) {
+    elapsedTime(newV, oldV) {
+      if (newV < oldV && newV === 0) {
         clearInterval(this.currentInterval);
         this.$router.push({ name: "entryPage" });
       }
