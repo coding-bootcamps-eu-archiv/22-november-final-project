@@ -4,28 +4,28 @@
     <div class="highscore-type_wrapper">
       <p
         class="highscore-type"
-        :class="{ 'highscore-type--active': toggleHighscoreDetails === 5 }"
+        :class="{ 'highscore-type--active': currentHighscoreType === 5 }"
         @click="toggleHighscoreType(5)"
       >
         5
       </p>
       <p
         class="highscore-type"
-        :class="{ 'highscore-type--active': toggleHighscoreDetails === 10 }"
+        :class="{ 'highscore-type--active': currentHighscoreType === 10 }"
         @click="toggleHighscoreType(10)"
       >
         10
       </p>
       <p
         class="highscore-type"
-        :class="{ 'highscore-type--active': toggleHighscoreDetails === 15 }"
+        :class="{ 'highscore-type--active': currentHighscoreType === 15 }"
         @click="toggleHighscoreType(15)"
       >
         15
       </p>
       <p
         class="highscore-type"
-        :class="{ 'highscore-type--active': toggleHighscoreDetails === 20 }"
+        :class="{ 'highscore-type--active': currentHighscoreType === 20 }"
         @click="toggleHighscoreType(20)"
       >
         20
@@ -46,7 +46,7 @@
           <td></td>
           <td colspan="4"><hr /></td>
         </tr>
-        <tr v-for="(gamer, index) of filteredHighscoreData" :key="gamer.id">
+        <tr v-for="(gamer, index) of toggleHighscoreDetails" :key="gamer.id">
           <td>{{ index + 1 }}.</td>
           <td>{{ gamer.name }}</td>
           <td>{{ gamer.elapsedTime }}</td>
@@ -63,9 +63,9 @@ export default {
   name: "HighscoreView",
   data() {
     return {
-      toggleHighscoreDetails: 5,
+      currentHighscoreType: 5,
       highscoreData: [],
-      filteredHighscoreData: [],
+      sortedHighscoreData: [],
       gamer: [
         {
           id: "9b2e970b-307a-4754-a35e-4e16ecc8d65b",
@@ -78,9 +78,16 @@ export default {
       ],
     };
   },
+  computed: {
+    toggleHighscoreDetails() {
+      return this.sortedHighscoreData.filter((gamer) => {
+        return gamer.result[1] === this.currentHighscoreType;
+      });
+    },
+  },
   methods: {
     toggleHighscoreType(n) {
-      this.toggleHighscoreDetails = n;
+      this.currentHighscoreType = n;
     },
     getHighscoreScore() {
       this.highscoreData.forEach((gamer) => {
@@ -111,7 +118,7 @@ export default {
         .sort((a, b) => b - a);
       //push gamer data in the right order
       sortScore.forEach((score) => {
-        this.filteredHighscoreData.push(
+        this.sortedHighscoreData.push(
           this.highscoreData.filter((gamer) => {
             return gamer.highscore === score;
           })[0]
