@@ -1,4 +1,8 @@
 <template>
+  <login-modal v-if="isModalVisible" @closeModal="closeModal" />
+  <header class="entry-header">
+    <p class="admin" @click="showModal">Admin</p>
+  </header>
   <main>
     <h1>Time for a Quiz</h1>
     <p>please select</p>
@@ -24,12 +28,14 @@
 
 <script>
 import RadioSelect from "@/components/RadioSelect.vue";
+import LoginModal from "@/components/LoginModal.vue";
 import { useQuizStore } from "@/stores/quizStore.js";
 
 export default {
   name: "EntryView",
   components: {
     RadioSelect,
+    LoginModal,
   },
   setup() {
     const store = useQuizStore();
@@ -58,6 +64,7 @@ export default {
         },
         { title: "All", id: "all", checked: false },
       ],
+      isModalVisible: false,
     };
   },
   computed: {
@@ -85,18 +92,38 @@ export default {
         name: "gamePage",
       });
     },
+    showModal() {
+      this.isModalVisible = true;
+    },
+    closeModal() {
+      this.isModalVisible = false;
+    },
   },
 };
 </script>
 
 <style>
 h1 {
-  margin-top: 3rem;
+  margin-top: 1rem;
 }
 
 p {
   color: rgb(227, 181, 5);
 }
+.admin {
+  text-align: right;
+  font-size: 0.7rem;
+  cursor: pointer;
+}
+
+.admin:hover {
+  text-decoration: underline;
+}
+
+.entry-header {
+  padding: 0.5rem 1rem;
+}
+
 .entry-questions {
   display: flex;
   flex-direction: column;

@@ -19,6 +19,11 @@ const routes = [
     name: "resultPage",
     component: ResultView,
   },
+  {
+    path: "/admin/:user/:pass",
+    name: "adminPage",
+    component: () => import("@/views/AdminView.vue"),
+  },
 ];
 
 const router = createRouter({
