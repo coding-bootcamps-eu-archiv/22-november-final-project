@@ -1,10 +1,26 @@
 <template>
+  <div
+    class="burger"
+    @click="toggleLinks = !toggleLinks"
+    :class="{ 'burger-active': toggleLinks }"
+  >
+    <div v-show="toggleLinks" class="burger-links">
+      <router-link :to="{ name: 'entryPage' }">New game</router-link>
+      <router-link :to="{ name: 'highscorePage' }">Highscore</router-link>
+    </div>
+  </div>
+  <div class="burger-active_open" v-show="toggleLinks"></div>
   <router-view />
 </template>
 
 <script>
 export default {
   name: "App",
+  data() {
+    return {
+      toggleLinks: false,
+    };
+  },
 };
 </script>
 
@@ -44,16 +60,66 @@ body {
   text-align: center;
 }
 
-nav {
-  padding: 30px;
-}
-
-nav a {
+.burger a {
   font-weight: bold;
-  color: rgb(255, 255, 255, 0.3);
+  color: rgb(255, 255, 255);
+  text-decoration: none;
+  font-size: 1.5rem;
+  transition: scale 0.3s ease-out, color 0.3s ease-in;
 }
 
-nav a.router-link-exact-active {
-  color: rgb(17, 161, 26, 0.6);
+.burger a:hover {
+  scale: 1.1;
+  color: rgb(187, 243, 191);
+}
+
+.burger a.router-link-exact-active {
+  text-shadow: 2px 5px 15px rgb(17, 161, 26), 2px 5px 5px rgb(17, 161, 26),
+    2px 5px 10px rgb(17, 161, 26);
+}
+
+.burger {
+  width: 2.5rem;
+  height: 2.5rem;
+  background-color: rgb(0, 0, 0, 0.3);
+  border-radius: 0.5rem;
+  position: absolute;
+  top: 3%;
+  left: 3%;
+  z-index: 1;
+}
+.burger::before {
+  font-size: 1.8rem;
+  content: "\2630";
+  color: rgba(255, 255, 255, 0.5);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+}
+.burger-active {
+  background-color: rgb(255, 255, 255, 0.1);
+}
+.burger-active::before {
+  content: "x";
+}
+.burger-active_open {
+  width: 30rem;
+  height: 120vh;
+  background-color: rgb(0, 0, 0, 0.3);
+  rotate: 10deg;
+  backdrop-filter: blur(0.5rem);
+  position: fixed;
+  bottom: -3rem;
+  left: -15rem;
+  transform-origin: 100% 100%;
+}
+.burger-links {
+  height: 50vh;
+  width: 15rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1rem;
 }
 </style>
