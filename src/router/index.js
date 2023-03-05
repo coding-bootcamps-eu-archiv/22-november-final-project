@@ -20,7 +20,7 @@ const routes = [
     component: ResultView,
   },
   {
-    path: "/admin/:user/:pass",
+    path: "/admin/login-success/user?:user",
     name: "adminPage",
     component: () => import("@/views/AdminView.vue"),
   },

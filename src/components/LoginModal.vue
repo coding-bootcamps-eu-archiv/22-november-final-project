@@ -4,9 +4,28 @@
       <p class="close" @click="$emit('closeModal')">x</p>
       <h3>Login</h3>
       <form class="login__login-form">
-        <input type="text" id="user-name" placeholder="Username" />
-        <input type="text" id="password" placeholder="Password" />
-        <button>Login</button>
+        <input
+          type="text"
+          id="user-name"
+          placeholder="Username"
+          v-model="username"
+        />
+        <p class="error-message" v-if="username === '' && isError">
+          {{ errorMessage }}
+        </p>
+        <input
+          type="password"
+          id="password"
+          placeholder="Password"
+          v-model="password"
+        />
+        <p
+          class="error-message"
+          v-if="errorMessage === 'Sorry, wrong password'"
+        >
+          {{ errorMessage }}
+        </p>
+        <button @click.prevent="openAdmin">Login</button>
       </form>
     </div>
   </div>
@@ -16,7 +35,40 @@
 export default {
   name: "LoginModal",
   data() {
-    return {};
+    return {
+      username: "",
+      password: "",
+      errorMessage: "",
+      isError: false,
+    };
+  },
+  methods: {
+    showErrorMessage(error) {
+      if (error === "emptyUsername") {
+        this.isError = true;
+        this.errorMessage = "Please enter a username";
+      }
+      if (error === "wrongPassword") {
+        this.isError = true;
+        this.errorMessage = "Sorry, wrong password";
+      }
+    },
+    openAdmin() {
+      if (this.username === "") {
+        this.isError = true;
+        this.showErrorMessage("emptyUsername");
+        return false;
+      }
+      if (this.password === "cbe-November-2022") {
+        this.isError = false;
+        this.$router.push({
+          name: "adminPage",
+          params: {
+            user: this.username,
+          },
+        });
+      } else this.showErrorMessage("wrongPassword");
+    },
   },
 };
 </script>
@@ -57,6 +109,12 @@ button {
   padding: 1rem;
   background-color: rgb(227, 181, 5);
   border-radius: 2rem;
+  cursor: pointer;
+  transition: scale 0.2s ease-out;
+}
+
+button:hover {
+  scale: 1.1;
 }
 .login {
   position: relative;
