@@ -42,12 +42,16 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="gamer of gamer" :key="gamer.id">
-          <td>1.</td>
+        <tr>
+          <td></td>
+          <td colspan="4"><hr /></td>
+        </tr>
+        <tr v-for="(gamer, index) of filteredHighscoreData" :key="gamer.id">
+          <td>{{ index + 1 }}.</td>
           <td>{{ gamer.name }}</td>
           <td>{{ gamer.elapsedTime }}</td>
           <td>{{ gamer.result[0] }} / {{ gamer.result[1] }}</td>
-          <td>{{ gamer.passedRatio }}</td>
+          <td>{{ gamer.highscore }}</td>
         </tr>
       </tbody>
     </table>
@@ -60,13 +64,15 @@ export default {
   data() {
     return {
       toggleHighscoreDetails: 5,
+      highscoreData: [],
+      filteredHighscoreData: [],
       gamer: [
         {
           id: "9b2e970b-307a-4754-a35e-4e16ecc8d65b",
           name: "JohnDoe",
           amountOfQuestions: 5,
-          elapsedTime: 122,
-          passedRatio: "60%",
+          elapsedTime: 500,
+          passedRatio: "100%",
           result: [3, 5],
         },
       ],
@@ -76,6 +82,51 @@ export default {
     toggleHighscoreType(n) {
       this.toggleHighscoreDetails = n;
     },
+    getHighscoreScore() {
+      this.highscoreData.forEach((gamer) => {
+        const timePerQuestion = gamer.elapsedTime / gamer.result[1];
+        let factor = 1;
+        //if average time per question < 15s -> factor = 10
+        //for every 5 seconds more, factor reduces at 1
+        //minimum factor = 1
+        for (let i = 0; i <= 9; i++) {
+          if (timePerQuestion <= 15 + i * 5) {
+            factor = 10 - i;
+            i = 9;
+          }
+        }
+        let bonus = 0;
+        if (gamer.passedRatio === "100%") {
+          bonus = 300;
+        }
+        gamer.highscore = gamer.result[0] * 10 * factor + bonus;
+      });
+    },
+    sortByHighscore() {
+      //sort highscore values
+      const sortScore = this.highscoreData
+        .map((gamer) => {
+          return gamer.highscore;
+        })
+        .sort((a, b) => b - a);
+      //push gamer data in the right order
+      sortScore.forEach((score) => {
+        this.filteredHighscoreData.push(
+          this.highscoreData.filter((gamer) => {
+            return gamer.highscore === score;
+          })[0]
+        );
+      });
+    },
+  },
+  async created() {
+    const response = await fetch(
+      "https://22-november.api.cbe.uber.space/highscore"
+    );
+    const highscoreData = await response.json();
+    this.highscoreData = highscoreData;
+    this.getHighscoreScore();
+    this.sortByHighscore();
   },
 };
 </script>
