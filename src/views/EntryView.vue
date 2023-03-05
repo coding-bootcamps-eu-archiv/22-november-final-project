@@ -71,12 +71,10 @@ export default {
     url() {
       let url = "";
       if (this.selectedTopic === "all") {
-        url = "https://22-november.api.cbe.uber.space/quiz/collection?";
+        url = this.store.url + "quiz/collection?";
       } else {
         url =
-          "https://22-november.api.cbe.uber.space/quiz/collection?group=" +
-          this.selectedTopic +
-          "&";
+          this.store.url + "quiz/collection?group=" + this.selectedTopic + "&";
       }
       return url + "limit=" + this.selectedNumberOfQuestions + "&random=1";
     },
