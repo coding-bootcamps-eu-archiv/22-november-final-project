@@ -167,7 +167,10 @@ export default {
   },
   data() {
     return {
-      resultData: {},
+      resultData: {
+        details: [],
+        passedRatio: "",
+      },
       toggleAnswerDetails: "",
       timer: 5,
       currentInterval: undefined,
@@ -204,9 +207,14 @@ export default {
     },
     async sendHighscore() {
       if (this.userName) {
-        const highscoreData = this.resultData;
-        delete highscoreData.details;
-        highscoreData.name = this.userName;
+        const highscoreData = {
+          name: this.userName,
+          elapsedTime: this.resultData.elapsedTime,
+          passedRatio: this.resultData.passedRatio,
+          total: this.resultData.total,
+          result: this.resultData.result,
+          id: this.resultData.id,
+        };
 
         localStorage.setItem("userName", JSON.stringify(this.userName));
 

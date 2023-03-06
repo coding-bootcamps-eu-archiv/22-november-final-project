@@ -91,7 +91,7 @@ nav a.router-link-exact-active {
   position: absolute;
   top: 3%;
   left: 3%;
-  z-index: 2;
+  z-index: 3;
 }
 .burger::before {
   font-size: 1.8rem;

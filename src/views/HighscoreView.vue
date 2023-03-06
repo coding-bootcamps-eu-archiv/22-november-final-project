@@ -1,67 +1,71 @@
 <template>
-  <h2 class="highscore-heading">Highscore</h2>
-  <main class="highscore-wrapper">
-    <div class="highscore-type_wrapper">
-      <button
-        class="highscore-type"
-        :class="{ 'highscore-type--active': currentHighscoreType === 5 }"
-        @click="toggleHighscoreType(5)"
-      >
-        5
-      </button>
-      <button
-        class="highscore-type"
-        :class="{ 'highscore-type--active': currentHighscoreType === 10 }"
-        @click="toggleHighscoreType(10)"
-      >
-        10
-      </button>
-      <button
-        class="highscore-type"
-        :class="{ 'highscore-type--active': currentHighscoreType === 15 }"
-        @click="toggleHighscoreType(15)"
-      >
-        15
-      </button>
-      <button
-        class="highscore-type"
-        :class="{ 'highscore-type--active': currentHighscoreType === 20 }"
-        @click="toggleHighscoreType(20)"
-      >
-        20
-      </button>
-    </div>
-    <table class="score-table">
-      <thead>
-        <tr>
-          <th></th>
-          <th class="score-table_th">name</th>
-          <th class="score-table_th">time</th>
-          <th class="score-table_th">right</th>
-          <th class="score-table_th">score</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td></td>
-          <td colspan="4"><hr /></td>
-        </tr>
-        <tr
-          v-for="(gamer, index) of toggleHighscoreDetails"
-          :key="gamer.id"
-          :class="{ 'score-table_td-current': gamer.id === store.highscoreID }"
+  <div>
+    <h2 class="highscore-heading">Highscore</h2>
+    <main class="highscore-wrapper">
+      <div class="highscore-type_wrapper">
+        <button
+          class="highscore-type"
+          :class="{ 'highscore-type--active': currentHighscoreType === 5 }"
+          @click="toggleHighscoreType(5)"
         >
-          <td class="score-table_td">{{ index + 1 }}.</td>
-          <td class="score_gamer-name score-table_td">{{ gamer.name }}</td>
-          <td class="score-table_td">{{ gamer.elapsedTime }}</td>
-          <td class="score-table_td">
-            {{ gamer.result[0] }} / {{ gamer.result[1] }}
-          </td>
-          <td class="score-table_td">{{ gamer.highscore }}</td>
-        </tr>
-      </tbody>
-    </table>
-  </main>
+          5
+        </button>
+        <button
+          class="highscore-type"
+          :class="{ 'highscore-type--active': currentHighscoreType === 10 }"
+          @click="toggleHighscoreType(10)"
+        >
+          10
+        </button>
+        <button
+          class="highscore-type"
+          :class="{ 'highscore-type--active': currentHighscoreType === 15 }"
+          @click="toggleHighscoreType(15)"
+        >
+          15
+        </button>
+        <button
+          class="highscore-type"
+          :class="{ 'highscore-type--active': currentHighscoreType === 20 }"
+          @click="toggleHighscoreType(20)"
+        >
+          20
+        </button>
+      </div>
+      <table class="score-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th class="score-table_th">name</th>
+            <th class="score-table_th">time</th>
+            <th class="score-table_th">right</th>
+            <th class="score-table_th">score</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td></td>
+            <td colspan="4"><hr /></td>
+          </tr>
+          <tr
+            v-for="(gamer, index) of toggleHighscoreDetails"
+            :key="gamer.id"
+            :class="{
+              'score-table_td-current': gamer.id === store.highscoreID,
+            }"
+          >
+            <td class="score-table_td">{{ index + 1 }}.</td>
+            <td class="score_gamer-name score-table_td">{{ gamer.name }}</td>
+            <td class="score-table_td">{{ gamer.elapsedTime }}</td>
+            <td class="score-table_td">
+              {{ gamer.result[0] }} / {{ gamer.result[1] }}
+            </td>
+            <td class="score-table_td">{{ gamer.highscore }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </main>
+  </div>
 </template>
 
 <script>
