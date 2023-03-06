@@ -84,7 +84,11 @@ export default {
       this[id] = selection;
     },
     startGame() {
-      this.store.givenAnswers.data = [];
+      this.store.givenAnswers = {
+        data: [],
+        elapsedTime: 0,
+      };
+      this.store.highscoreID = "";
       this.store.passedUrl = this.url;
       this.$router.push({
         name: "gamePage",
