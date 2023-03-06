@@ -1,68 +1,76 @@
 <template>
   <header>
-    <p class="admin" @click="logout">Logout</p>
+    <a class="admin" @click="logout">Logout</a>
   </header>
   <main>
     <h2>Admin Panel</h2>
     <table>
-      <tr>
-        <th>Topic</th>
-        <th colspan="4">Question</th>
-      </tr>
-      <tr>
-        <td>
-          <select
-            name="add-new__group-name"
-            id="add-new__group-name"
-            v-model="selectedGroup"
-          >
-            <option disabled value="">Please Select</option>
-            <option
-              v-for="(group, index) of groups"
-              :key="index"
-              :value="group.id"
+      <thead>
+        <tr>
+          <th>Topic</th>
+          <th colspan="4">Question</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="question of allQuestions" :key="question.id">
+          <td>{{ getGroupName(question.groupId) }}</td>
+          <td>{{ question.question }}</td>
+          <td>
+            <button class="edit" @click="editQuestion(question.id)">
+              <font-awesome-icon
+                icon="fa-solid fa-pen"
+                size="xs"
+                class="icon"
+              />
+            </button>
+          </td>
+          <td>
+            <button class="delete" @click="deleteQuestion(question.id)">
+              <font-awesome-icon
+                icon="fa-solid fa-trash-can"
+                size="xs"
+                class="icon"
+              />
+            </button>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <select
+              name="add-new__group-name"
+              id="add-new__group-name"
+              v-model="selectedGroup"
             >
-              {{ group.title }}
-            </option>
-          </select>
-        </td>
-        <td>
-          <input
-            type="text"
-            name="add-new__question"
-            id="add-new__question"
-            placeholder="type your question"
-            v-model="newQuestion"
-          />
-        </td>
-        <td colspan="2">
-          <button
-            class="add-new"
-            @click="addNewQuestion"
-            :disabled="disabledAddButton"
-          >
-            Add New Question
-          </button>
-        </td>
-      </tr>
-      <tr v-for="question of allQuestions" :key="question.id">
-        <td>{{ getGroupName(question.groupId).title }}</td>
-        <td>{{ question.question }}</td>
-        <td>
-          <button class="edit">
-            <font-awesome-icon icon="fa-solid fa-pen" size="xs" class="icon" />
-          </button>
-        </td>
-        <td>
-          <button class="delete" @click="deleteQuestion(question.id)">
-            <font-awesome-icon
-              icon="fa-solid fa-trash-can"
-              size="xs"
-              class="icon"
+              <option disabled value="">Please Select</option>
+              <option
+                v-for="(group, index) of groups"
+                :key="index"
+                :value="group.id"
+              >
+                {{ group.title }}
+              </option>
+            </select>
+          </td>
+          <td>
+            <input
+              type="text"
+              name="add-new__question"
+              id="add-new__question"
+              placeholder="type your question"
+              v-model="newQuestion"
             />
-          </button>
-        </td>
-      </tr>
+          </td>
+          <td colspan="2">
+            <button
+              class="add-new"
+              @click="addNewQuestion"
+              :disabled="disabledAddButton"
+            >
+              Add New Question
+            </button>
+          </td>
+        </tr>
+      </tbody>
     </table>
     <div>
       <p><span>&lt;</span><span> &gt;</span></p>
@@ -114,8 +122,8 @@ export default {
       this.$router.push({ name: "entryPage" });
     },
     getGroupName(groupId) {
-      const index = this.groups.findIndex((el) => el.id === groupId);
-      return this.groups[index];
+      const group = this.groups.find((el) => el.id === groupId);
+      return group?.title ?? "";
     },
     async addNewQuestion() {
       const response = await fetch(this.store.url + "questions", {
@@ -134,15 +142,21 @@ export default {
       const index = this.allQuestions.findIndex((el) => el.id === questionId);
       this.allQuestions.splice(index, 1);
     },
-  },
-  watch: {
-    allQuestions() {},
+    editQuestion(questionId) {
+      this.$router.push({
+        name: "editQuestionPage",
+        params: {
+          questionId: questionId,
+        },
+      });
+    },
   },
 };
 </script>
 
 <style scoped>
 header {
+  text-align: right;
   padding: 0.5rem 1rem;
 }
 
@@ -215,7 +229,7 @@ select:focus {
 }
 
 .admin:hover {
-  text-decoration: underline;
+  color: rgb(227, 181, 5);
 }
 .edit {
   background-color: rgb(227, 181, 5);
