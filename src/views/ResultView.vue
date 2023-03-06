@@ -182,6 +182,7 @@ export default {
     },
   },
   async created() {
+    console.log(this.store.url + "quiz/result");
     try {
       const response = await fetch(this.store.url + "quiz/result", {
         method: "POST",

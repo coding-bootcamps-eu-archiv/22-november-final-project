@@ -85,7 +85,7 @@ export default {
     },
     startGame() {
       this.store.givenAnswers.data = [];
-      this.store.url = this.url;
+      this.store.passedUrl = this.url;
       this.$router.push({
         name: "gamePage",
       });
@@ -115,7 +115,7 @@ p {
 }
 
 .admin:hover {
-  text-decoration: underline;
+  color: rgb(227, 181, 5);
 }
 
 .entry-header {

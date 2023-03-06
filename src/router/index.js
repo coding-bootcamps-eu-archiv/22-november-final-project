@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
 import EntryView from "@/views/EntryView.vue";
-import ResultView from "@/views/ResultView.vue";
 
 const routes = [
   {
@@ -16,7 +15,7 @@ const routes = [
   {
     path: "/result",
     name: "resultPage",
-    component: ResultView,
+    component: () => import("@/views/ResultView.vue"),
   },
   {
     path: "/admin/login-success/user?:user",

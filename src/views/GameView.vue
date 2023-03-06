@@ -128,7 +128,7 @@ export default {
     },
   },
   async created() {
-    if (!this.store.url) {
+    if (!this.store.passedUrl) {
       this.elapsedTime = 5;
 
       this.currentInterval = setInterval(() => {
@@ -143,7 +143,7 @@ export default {
       };
     }
 
-    const response = await fetch(this.store.url);
+    const response = await fetch(this.store.passedUrl);
     this.setOfQuestions = await response.json();
     this.selectedQuestionLength = this.setOfQuestions.numberOfItems;
     this.currentQuestion = this.setOfQuestions.data[this.currentQuestionNumber];
