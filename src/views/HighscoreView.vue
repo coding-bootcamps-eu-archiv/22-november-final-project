@@ -197,7 +197,13 @@ export default {
 
 .score-table_td-current > td {
   color: rgb(227, 181, 5);
+}
+
+.score-table_td-current {
   box-shadow: inset 0 0 5px white, 0 0 10px white, 0 0 20px white;
+  position: sticky;
+  bottom: 0rem;
+  backdrop-filter: blur(1rem);
 }
 
 @media screen and (min-width: 500px) {
