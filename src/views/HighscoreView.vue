@@ -1,35 +1,35 @@
 <template>
-  <h1>Highscore</h1>
+  <h2 class="highscore-heading">Highscore</h2>
   <div class="highscore-wrapper">
     <div class="highscore-type_wrapper">
-      <p
+      <button
         class="highscore-type"
         :class="{ 'highscore-type--active': currentHighscoreType === 5 }"
         @click="toggleHighscoreType(5)"
       >
         5
-      </p>
-      <p
+      </button>
+      <button
         class="highscore-type"
         :class="{ 'highscore-type--active': currentHighscoreType === 10 }"
         @click="toggleHighscoreType(10)"
       >
         10
-      </p>
-      <p
+      </button>
+      <button
         class="highscore-type"
         :class="{ 'highscore-type--active': currentHighscoreType === 15 }"
         @click="toggleHighscoreType(15)"
       >
         15
-      </p>
-      <p
+      </button>
+      <button
         class="highscore-type"
         :class="{ 'highscore-type--active': currentHighscoreType === 20 }"
         @click="toggleHighscoreType(20)"
       >
         20
-      </p>
+      </button>
     </div>
     <table class="score-table">
       <thead>
@@ -77,13 +77,12 @@ export default {
     return {
       currentHighscoreType: 5,
       highscoreData: [],
-      sortedHighscoreData: [],
       currentEntry: "",
     };
   },
   computed: {
     toggleHighscoreDetails() {
-      return this.sortedHighscoreData.filter((gamer) => {
+      return this.highscoreData.filter((gamer) => {
         return gamer.result[1] === this.currentHighscoreType;
       });
     },
@@ -113,20 +112,8 @@ export default {
       });
     },
     sortByHighscore() {
-      //sort highscore values
-      const sortScore = this.highscoreData
-        .map((gamer) => {
-          return gamer.highscore;
-        })
-        .sort((a, b) => b - a);
-      //push gamer data in the right order
-      sortScore.forEach((score) => {
-        this.sortedHighscoreData.push(
-          this.highscoreData.filter((gamer) => {
-            return gamer.highscore === score;
-          })[0]
-        );
-      });
+      //sort highscoreData
+      return this.highscoreData.sort((a, b) => b.highscore - a.highscore);
     },
     getCurrentEntry() {
       this.currentEntry = this.highscoreData.filter((game) => {
@@ -151,6 +138,10 @@ export default {
 </script>
 
 <style>
+.highscore-heading {
+  margin-top: 3rem;
+}
+
 .highscore-wrapper {
   display: grid;
   background-color: rgba(0, 0, 0, 0.3);
@@ -165,8 +156,12 @@ export default {
 }
 
 .highscore-type {
+  margin-block: 1rem;
+  border: none;
+  cursor: pointer;
   background-color: rgba(0, 0, 0, 0.3);
   border-radius: 1rem;
+  color: rgb(227, 181, 5);
   box-shadow: 0 0 5px rgb(227, 181, 5);
   padding: 0.5rem 1rem;
   min-width: 20vw;
