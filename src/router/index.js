@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import EntryView from "@/views/EntryView.vue";
 //import GameView from "@/views/GameView.vue";
 import ResultView from "@/views/ResultView.vue";
+import HighscoreView from "@/views/HighscoreView.vue";
 
 const routes = [
   {
@@ -18,6 +19,11 @@ const routes = [
     path: "/result",
     name: "resultPage",
     component: ResultView,
+  },
+  {
+    path: "/highscore",
+    name: "highscorePage",
+    component: HighscoreView,
   },
   {
     path: "/admin/login-success/user?:user",

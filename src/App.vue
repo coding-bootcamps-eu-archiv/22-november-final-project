@@ -1,10 +1,45 @@
 <template>
-  <router-view />
+  <button
+    class="burger"
+    @click="toggleLinks = !toggleLinks"
+    :class="{ 'burger-active': toggleLinks }"
+  ></button>
+  <Transition>
+    <nav v-show="toggleLinks" class="burger-links">
+      <router-link :to="{ name: 'entryPage' }" @click="toggleLinks = false"
+        >New game</router-link
+      >
+      <router-link
+        v-show="store.givenAnswers.elapsedTime !== 0"
+        :to="{ name: 'resultPage' }"
+        @click="toggleLinks = false"
+      >
+        your Result</router-link
+      >
+      <router-link :to="{ name: 'highscorePage' }" @click="toggleLinks = false"
+        >Highscore</router-link
+      >
+    </nav>
+  </Transition>
+  <Transition>
+    <div class="burger-active_open" v-show="toggleLinks"></div>
+  </Transition>
+  <router-view @click="toggleLinks = false" />
 </template>
 
 <script>
+import { useQuizStore } from "@/stores/quizStore.js";
 export default {
   name: "App",
+  setup() {
+    const store = useQuizStore();
+    return { store };
+  },
+  data() {
+    return {
+      toggleLinks: false,
+    };
+  },
 };
 </script>
 
@@ -44,16 +79,101 @@ body {
   text-align: center;
 }
 
-nav {
-  padding: 30px;
+button {
+  cursor: pointer;
 }
 
 nav a {
   font-weight: bold;
-  color: rgb(255, 255, 255, 0.3);
+  color: rgb(255, 255, 255);
+  text-decoration: none;
+  font-size: 2rem;
+  transition: scale 0.3s ease-out, color 0.3s ease-in;
+}
+
+nav a:hover {
+  scale: 1.1;
+  color: rgb(187, 243, 191);
 }
 
 nav a.router-link-exact-active {
-  color: rgb(17, 161, 26, 0.6);
+  text-shadow: 2px 5px 15px rgb(17, 161, 26), 2px 5px 5px rgb(17, 161, 26),
+    2px 5px 10px rgb(17, 161, 26);
+}
+
+.burger {
+  border: none;
+  cursor: pointer;
+  width: 2.5rem;
+  height: 2.5rem;
+  background-color: rgb(0, 0, 0, 0.3);
+  border-radius: 0.5rem;
+  position: absolute;
+  top: 3%;
+  left: 3%;
+  z-index: 3;
+}
+.burger::before {
+  font-size: 1.8rem;
+  content: "\2630";
+  color: rgba(255, 255, 255, 0.5);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+}
+.burger-active {
+  background-color: rgb(255, 255, 255, 0.1);
+}
+.burger-active::before {
+  content: "x";
+}
+@keyframes slide-in-left {
+  0% {
+    transform: translateX(-1000px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+@keyframes slide-out-left {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-1000px);
+    opacity: 0;
+  }
+}
+.burger-active_open {
+  width: 30rem;
+  height: 120vh;
+  background-color: rgb(0, 0, 0, 0.3);
+  rotate: 10deg;
+  backdrop-filter: blur(0.5rem);
+  position: fixed;
+  bottom: -3rem;
+  left: -15rem;
+  transform-origin: 100% 100%;
+  z-index: 1;
+}
+.v-enter-active {
+  animation: slide-in-left 0.5s ease-out both;
+}
+.v-leave-active {
+  animation: slide-out-left 0.5s ease-in both;
+}
+.burger-links {
+  height: 50vh;
+  width: 20rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2rem;
+  position: absolute;
+  z-index: 2;
 }
 </style>

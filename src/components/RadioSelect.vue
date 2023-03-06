@@ -67,5 +67,6 @@ export default {
   padding: 0.5rem 1rem;
   border-radius: 2rem;
   transition: box-shadow 0.3s, background-color 0.3s;
+  cursor: pointer;
 }
 </style>

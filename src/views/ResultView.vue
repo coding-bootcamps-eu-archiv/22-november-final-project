@@ -36,7 +36,7 @@
           >
             <h4 class="result-wrapper_element-h4">right</h4>
             <p class="result-wrapper_element-p">
-              {{ resultData.result[0] }}
+              {{ getRightAnswers.length }}
             </p>
           </div>
           <div
@@ -55,7 +55,7 @@
           >
             <h4 class="result-wrapper_element-h4">wrong</h4>
             <p class="result-wrapper_element-p">
-              {{ resultData.result[1] - resultData.result[0] }}
+              {{ getWrongAnswers.length }}
             </p>
           </div>
         </section>
@@ -123,6 +123,28 @@
             get better.
           </p>
         </section>
+
+        <!-- Highscore Form -->
+        <form class="enter-score">
+          <input
+            type="text"
+            name="username"
+            id="username"
+            class="enter-score_input"
+            placeholder="PUT A NICKNAME"
+            v-model="userName"
+            :disabled="store.highscoreID"
+          />
+          <label for="username">
+            <button
+              class="enter-score_btn"
+              @click.prevent="sendHighscore"
+              :class="{ 'enter-score_btn-active': userName }"
+            >
+              <span v-show="!store.highscoreID">enter</span> highscore
+            </button>
+          </label>
+        </form>
       </div>
       <button class="new-btn" @click="newGame">New Game</button>
     </main>
@@ -146,12 +168,16 @@ export default {
   },
   data() {
     return {
-      resultData: {},
+      resultData: {
+        details: [],
+        passedRatio: "",
+      },
       toggleAnswerDetails: "",
       timer: 5,
       currentInterval: undefined,
       showNotificatorRight: true,
       showNotificatorWrong: true,
+      userName: "",
     };
   },
   computed: {
@@ -180,8 +206,39 @@ export default {
     newGame() {
       this.$router.push({ name: "entryPage" });
     },
+    async sendHighscore() {
+      if (this.userName && !this.store.highscoreID) {
+        const highscoreData = {
+          name: this.userName,
+          elapsedTime: this.resultData.elapsedTime,
+          passedRatio: this.resultData.passedRatio,
+          total: this.resultData.total,
+          result: this.resultData.result,
+          id: this.resultData.id,
+        };
+
+        localStorage.setItem("userName", JSON.stringify(this.userName));
+
+        const response = await fetch(
+          "https://22-november.api.cbe.uber.space/highscore",
+          {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify(highscoreData),
+          }
+        );
+        const data = await response.json();
+        this.store.highscoreID = data.id;
+        this.$router.push({ name: "highscorePage" });
+      } else if (this.store.highscoreID) {
+        this.$router.push({ name: "highscorePage" });
+      }
+    },
   },
   async created() {
+    if (localStorage.getItem("userName")) {
+      this.userName = JSON.parse(localStorage.getItem("userName"));
+    }
     try {
       const response = await fetch(this.store.url + "quiz/result", {
         method: "POST",
@@ -508,8 +565,78 @@ response:
 .result-description {
   margin-top: 2rem;
   color: rgb(255, 255, 255, 0.7);
-  _text-transform: none;
   font-size: 1rem;
+}
+
+.enter-score {
+  justify-self: center;
+  position: relative;
+  width: fit-content;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.5rem;
+  margin: 1rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  padding: 1rem;
+}
+
+.enter-score_input {
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 2rem;
+  border: none;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  text-transform: none;
+}
+.enter-score_input:focus {
+  outline: none;
+  box-shadow: inset 0 0 5px white, 0 0 10px white, 0 0 20px white;
+}
+.enter-score_input:focus + label > .enter-score_btn-active {
+  box-shadow: inset 0 0 5px white, 0 0 10px white, 0 0 20px white;
+}
+
+.enter-score_input:disabled {
+  color: rgb(255, 255, 255, 0.5);
+}
+
+.enter-score_btn {
+  background-color: rgb(17, 161, 26, 0.5);
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 1rem;
+  border: none;
+  border-radius: 2rem;
+  padding: 0.5rem 1rem;
+  position: relative;
+  pointer-events: none;
+  width: 100%;
+}
+.enter-score_btn span {
+  font-size: 1rem;
+}
+
+.enter-score_btn-active {
+  cursor: pointer;
+  pointer-events: all;
+  background-color: rgb(17, 161, 26);
+  color: white;
+}
+
+@media screen and (min-width: 700px) {
+  .enter-score {
+    padding: 0;
+    background-color: transparent;
+  }
+  .enter-score_btn {
+    position: absolute;
+    width: max-content;
+    top: 0;
+    right: 0;
+  }
+  .enter-score_input {
+    width: 60vw;
+  }
 }
 
 .new-btn {
