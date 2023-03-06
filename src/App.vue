@@ -136,7 +136,7 @@ nav a.router-link-exact-active {
   height: 2.5rem;
   background-color: rgb(0, 0, 0, 0.3);
   border-radius: 0.5rem;
-  position: absolute;
+  position: fixed;
   top: 3%;
   left: 3%;
   z-index: 3;
@@ -201,7 +201,7 @@ nav a.router-link-exact-active {
   flex-direction: column;
   padding-top: 8rem;
   gap: 2rem;
-  position: absolute;
+  position: fixed;
   top: 0;
   z-index: 2;
 }
