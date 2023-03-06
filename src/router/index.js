@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import EntryView from "@/views/EntryView.vue";
+import HighscoreView from "@/views/HighscoreView.vue";
 
 const routes = [
   {
@@ -27,6 +28,11 @@ const routes = [
     name: "editQuestionPage",
     component: () => import("@/views/EditQuestionView.vue"),
     props: true,
+  },
+  {
+    path: "/highscore",
+    name: "highscorePage",
+    component: HighscoreView,
   },
 ];
 

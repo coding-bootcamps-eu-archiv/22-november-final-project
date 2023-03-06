@@ -271,6 +271,7 @@ export default {
   margin: 0.5rem 1rem;
   text-transform: none;
   word-break: break-word;
+  cursor: pointer;
 }
 
 .next-btn {

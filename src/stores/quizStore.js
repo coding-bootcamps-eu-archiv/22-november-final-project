@@ -9,5 +9,6 @@ export const useQuizStore = defineStore("quiz", {
       data: [],
     },
     stopwatch: "",
+    highscoreID: "",
   }),
 });
