@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
 import EntryView from "@/views/EntryView.vue";
-//import GameView from "@/views/GameView.vue";
 import ResultView from "@/views/ResultView.vue";
 
 const routes = [
@@ -23,6 +22,12 @@ const routes = [
     path: "/admin/login-success/user?:user",
     name: "adminPage",
     component: () => import("@/views/AdminView.vue"),
+  },
+  {
+    path: "/admin/login-sucess/user?:user/:questionId",
+    name: "editQuestionPage",
+    component: () => import("@/views/EditQuestionView.vue"),
+    props: true,
   },
 ];
 
