@@ -206,7 +206,7 @@ export default {
       this.$router.push({ name: "entryPage" });
     },
     async sendHighscore() {
-      if (this.userName) {
+      if (this.userName && !this.store.highscoreID) {
         const highscoreData = {
           name: this.userName,
           elapsedTime: this.resultData.elapsedTime,
@@ -228,6 +228,8 @@ export default {
         );
         const data = await response.json();
         this.store.highscoreID = data.id;
+        this.$router.push({ name: "highscorePage" });
+      } else if (this.store.highscoreID) {
         this.$router.push({ name: "highscorePage" });
       }
     },
