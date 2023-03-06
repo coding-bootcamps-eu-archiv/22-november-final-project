@@ -13,7 +13,7 @@
   <Transition>
     <div class="burger-active_open" v-show="toggleLinks"></div>
   </Transition>
-  <router-view />
+  <router-view @click="toggleLinks = false" />
 </template>
 
 <script>
@@ -91,7 +91,7 @@ nav a.router-link-exact-active {
   position: absolute;
   top: 3%;
   left: 3%;
-  z-index: 1;
+  z-index: 2;
 }
 .burger::before {
   font-size: 1.8rem;
@@ -138,6 +138,7 @@ nav a.router-link-exact-active {
   bottom: -3rem;
   left: -15rem;
   transform-origin: 100% 100%;
+  z-index: 1;
 }
 .v-enter-active {
   animation: slide-in-left 0.5s ease-out both;
@@ -153,6 +154,6 @@ nav a.router-link-exact-active {
   justify-content: center;
   gap: 1rem;
   position: absolute;
-  z-index: 1;
+  z-index: 2;
 }
 </style>
