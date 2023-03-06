@@ -6,8 +6,19 @@
   ></button>
   <Transition>
     <nav v-show="toggleLinks" class="burger-links">
-      <router-link :to="{ name: 'entryPage' }">New game</router-link>
-      <router-link :to="{ name: 'highscorePage' }">Highscore</router-link>
+      <router-link :to="{ name: 'entryPage' }" @click="toggleLinks = false"
+        >New game</router-link
+      >
+      <router-link
+        v-show="store.givenAnswers.elapsedTime !== 0"
+        :to="{ name: 'resultPage' }"
+        @click="toggleLinks = false"
+      >
+        your Result</router-link
+      >
+      <router-link :to="{ name: 'highscorePage' }" @click="toggleLinks = false"
+        >Highscore</router-link
+      >
     </nav>
   </Transition>
   <Transition>
@@ -17,8 +28,13 @@
 </template>
 
 <script>
+import { useQuizStore } from "@/stores/quizStore.js";
 export default {
   name: "App",
+  setup() {
+    const store = useQuizStore();
+    return { store };
+  },
   data() {
     return {
       toggleLinks: false,
@@ -63,11 +79,15 @@ body {
   text-align: center;
 }
 
+button {
+  cursor: pointer;
+}
+
 nav a {
   font-weight: bold;
   color: rgb(255, 255, 255);
   text-decoration: none;
-  font-size: 1.5rem;
+  font-size: 2rem;
   transition: scale 0.3s ease-out, color 0.3s ease-in;
 }
 
@@ -148,11 +168,11 @@ nav a.router-link-exact-active {
 }
 .burger-links {
   height: 50vh;
-  width: 15rem;
+  width: 20rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 1rem;
+  gap: 2rem;
   position: absolute;
   z-index: 2;
 }

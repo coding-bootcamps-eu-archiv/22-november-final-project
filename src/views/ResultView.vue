@@ -133,6 +133,7 @@
             class="enter-score_input"
             placeholder="PUT A NICKNAME"
             v-model="userName"
+            :disabled="store.highscoreID"
           />
           <label for="username">
             <button
@@ -140,7 +141,7 @@
               @click.prevent="sendHighscore"
               :class="{ 'enter-score_btn-active': userName }"
             >
-              enter highscore
+              <span v-show="!store.highscoreID">enter</span> highscore
             </button>
           </label>
         </form>
@@ -206,7 +207,7 @@ export default {
       this.$router.push({ name: "entryPage" });
     },
     async sendHighscore() {
-      if (this.userName) {
+      if (this.userName && !this.store.highscoreID) {
         const highscoreData = {
           name: this.userName,
           elapsedTime: this.resultData.elapsedTime,
@@ -228,6 +229,8 @@ export default {
         );
         const data = await response.json();
         this.store.highscoreID = data.id;
+        this.$router.push({ name: "highscorePage" });
+      } else if (this.store.highscoreID) {
         this.$router.push({ name: "highscorePage" });
       }
     },
@@ -597,6 +600,10 @@ response:
   box-shadow: inset 0 0 5px white, 0 0 10px white, 0 0 20px white;
 }
 
+.enter-score_input:disabled {
+  color: rgb(255, 255, 255, 0.5);
+}
+
 .enter-score_btn {
   background-color: rgb(17, 161, 26, 0.5);
   color: rgba(255, 255, 255, 0.5);
@@ -607,6 +614,9 @@ response:
   position: relative;
   pointer-events: none;
   width: 100%;
+}
+.enter-score_btn span {
+  font-size: 1rem;
 }
 
 .enter-score_btn-active {
