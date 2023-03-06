@@ -12,28 +12,6 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="question of allQuestions" :key="question.id">
-          <td>{{ getGroupName(question.groupId) }}</td>
-          <td>{{ question.question }}</td>
-          <td>
-            <button class="edit" @click="editQuestion(question.id)">
-              <font-awesome-icon
-                icon="fa-solid fa-pen"
-                size="xs"
-                class="icon"
-              />
-            </button>
-          </td>
-          <td>
-            <button class="delete" @click="deleteQuestion(question.id)">
-              <font-awesome-icon
-                icon="fa-solid fa-trash-can"
-                size="xs"
-                class="icon"
-              />
-            </button>
-          </td>
-        </tr>
         <tr>
           <td>
             <select
@@ -67,6 +45,28 @@
               :disabled="disabledAddButton"
             >
               Add New Question
+            </button>
+          </td>
+        </tr>
+        <tr v-for="question of allQuestions" :key="question.id">
+          <td>{{ getGroupName(question.groupId) }}</td>
+          <td>{{ question.question }}</td>
+          <td>
+            <button class="edit" @click="editQuestion(question.id)">
+              <font-awesome-icon
+                icon="fa-solid fa-pen"
+                size="xs"
+                class="icon"
+              />
+            </button>
+          </td>
+          <td>
+            <button class="delete" @click="deleteQuestion(question.id)">
+              <font-awesome-icon
+                icon="fa-solid fa-trash-can"
+                size="xs"
+                class="icon"
+              />
             </button>
           </td>
         </tr>
@@ -108,7 +108,13 @@ export default {
         groupId: this.selectedGroup,
         isActive: true,
         question: this.newQuestion,
-        answers: [],
+        answers: [
+          {
+            id: 1,
+            text: "",
+            isValid: false,
+          },
+        ],
       };
     },
     disabledAddButton() {
@@ -131,9 +137,16 @@ export default {
         headers: { "content-type": "application/json" },
         body: JSON.stringify(this.newQuestionObject),
       });
-      this.allQuestions.push(await response.json());
+      const questionData = await response.json();
+      this.allQuestions.push(questionData);
       this.selectedGroup = "";
       this.newQuestion = "";
+      this.$router.push({
+        name: "editQuestionPage",
+        params: {
+          questionId: questionData.id,
+        },
+      });
     },
     async deleteQuestion(questionId) {
       await fetch(this.store.url + "questions/" + questionId, {

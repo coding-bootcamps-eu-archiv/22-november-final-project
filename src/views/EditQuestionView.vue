@@ -26,18 +26,19 @@
                 type="text"
                 name="question-title"
                 id="question-title"
-                v-model="questionTitle"
+                v-model="questionData.question"
               />
             </td>
           </tr>
-          <tr v-for="(answer, index) of questionData.answers" :key="answer.id">
-            <th>Answer {{ index + 1 }}</th>
+          <tr v-for="answer of questionData.answers" :key="answer.id">
+            <th>Answer {{ answer.id }}</th>
             <td>
               <textarea
                 type="text"
                 name="question-title"
                 id="question-title"
                 v-model="answer.text"
+                placeholder="please enter an answer here"
               />
             </td>
             <td class="valid-answer">
@@ -49,19 +50,21 @@
               />
             </td>
           </tr>
-          <tr v-for="test of 4 - questionData.answers.length" :key="test">
-            <th>Answer {{ 5 - test }}</th>
-            <td>
-              <textarea type="text" name="question-title" id="question-title" />
-            </td>
-            <td class="valid-answer">
-              <input type="checkbox" name="valid-answer" id="valid-answer" />
-            </td>
+          <tr v-if="questionData.answers.length < 4">
+            <th class="add-answer">
+              <button
+                class="add-answer__add-btn"
+                @click="addAnswer(questionData.answers.length + 1)"
+              >
+                +
+              </button>
+            </th>
+            <td colspan="2"></td>
           </tr>
         </tbody>
       </table>
     </section>
-    <button class="update-btn">Update Question</button>
+    <button class="update-btn" @click="updateQuestion">Update Question</button>
   </main>
 </template>
 <script>
@@ -78,8 +81,13 @@ export default {
   },
   data() {
     return {
-      questionData: {},
-      newAnswers: [],
+      questionData: {
+        answers: {
+          id: 1,
+          text: "",
+          isValid: false,
+        },
+      },
       dataChanged: false,
     };
   },
@@ -96,28 +104,37 @@ export default {
     logout() {
       this.$router.push({ name: "entryPage" });
     },
+    addAnswer(answerId) {
+      this.questionData.answers.push({
+        id: answerId,
+        text: "",
+        isValid: false,
+      });
+    },
+    async updateQuestion() {
+      const transferData = {
+        groupId: this.questionData.groupId,
+        isActive: this.questionData.isActive,
+        question: this.questionData.question,
+        answers: this.questionData.answers,
+      };
+      await fetch(this.store.url + "questions/" + this.questionData.id, {
+        method: "DELETE",
+      });
+      await fetch(this.store.url + "questions", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(transferData),
+      });
+      this.$router.push({ name: "adminPage" });
+    },
   },
   async created() {
     const response = await fetch(
       this.store.url + "questions/" + this.questionId
     );
     this.questionData = await response.json();
-    this.newAnswers = this.questionData.answers;
-    /*
-    do {
-      this.newAnswers.push("");
-    } while (this.newAnswers.length !== 4);
-    */
   },
-  /*
-  watch: {
-    newAnswers(newVal, oldVal) {
-      if (newVal !== oldVal) {
-        this.dataChanged = true;
-      }
-    },
-  },
-  */
 };
 </script>
 
@@ -170,6 +187,10 @@ tbody th {
   font-size: 0.7rem;
 }
 
+.add-answer {
+  padding: 0;
+}
+
 .answer-id {
   text-align: left;
 }
@@ -197,18 +218,36 @@ select:focus {
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
 
-.update-btn {
+.add-new {
+  background-color: rgb(17, 161, 26);
+}
+
+.add-new:hover {
+  background-color: rgb(11, 95, 16);
+}
+.add-answer__add-btn {
   background-color: rgb(17, 161, 26);
   border: none;
   border-radius: 2rem;
   padding: 1rem 2rem;
   transition: scale 0.2s ease-out;
+  cursor: pointer;
+  width: fit-content;
+  justify-self: center;
+  scale: 0.6;
+}
+
+.update-btn {
+  background-color: rgb(17, 161, 26);
+  border: none;
+  border-radius: 2rem;
   margin: 2rem;
+  padding: 1rem 2rem;
+  transition: scale 0.2s ease-out;
   cursor: pointer;
   width: fit-content;
   justify-self: center;
 }
-
 .update-btn:hover {
   scale: 1.1;
 }
