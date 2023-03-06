@@ -1,15 +1,18 @@
 <template>
-  <div
+  <button
     class="burger"
     @click="toggleLinks = !toggleLinks"
     :class="{ 'burger-active': toggleLinks }"
-  >
-    <div v-show="toggleLinks" class="burger-links">
+  ></button>
+  <Transition>
+    <nav v-show="toggleLinks" class="burger-links">
       <router-link :to="{ name: 'entryPage' }">New game</router-link>
       <router-link :to="{ name: 'highscorePage' }">Highscore</router-link>
-    </div>
-  </div>
-  <div class="burger-active_open" v-show="toggleLinks"></div>
+    </nav>
+  </Transition>
+  <Transition>
+    <div class="burger-active_open" v-show="toggleLinks"></div>
+  </Transition>
   <router-view />
 </template>
 
@@ -60,7 +63,7 @@ body {
   text-align: center;
 }
 
-.burger a {
+nav a {
   font-weight: bold;
   color: rgb(255, 255, 255);
   text-decoration: none;
@@ -68,17 +71,19 @@ body {
   transition: scale 0.3s ease-out, color 0.3s ease-in;
 }
 
-.burger a:hover {
+nav a:hover {
   scale: 1.1;
   color: rgb(187, 243, 191);
 }
 
-.burger a.router-link-exact-active {
+nav a.router-link-exact-active {
   text-shadow: 2px 5px 15px rgb(17, 161, 26), 2px 5px 5px rgb(17, 161, 26),
     2px 5px 10px rgb(17, 161, 26);
 }
 
 .burger {
+  border: none;
+  cursor: pointer;
   width: 2.5rem;
   height: 2.5rem;
   background-color: rgb(0, 0, 0, 0.3);
@@ -103,6 +108,26 @@ body {
 .burger-active::before {
   content: "x";
 }
+@keyframes slide-in-left {
+  0% {
+    transform: translateX(-1000px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+@keyframes slide-out-left {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-1000px);
+    opacity: 0;
+  }
+}
 .burger-active_open {
   width: 30rem;
   height: 120vh;
@@ -114,6 +139,12 @@ body {
   left: -15rem;
   transform-origin: 100% 100%;
 }
+.v-enter-active {
+  animation: slide-in-left 0.5s ease-out both;
+}
+.v-leave-active {
+  animation: slide-out-left 0.5s ease-in both;
+}
 .burger-links {
   height: 50vh;
   width: 15rem;
@@ -121,5 +152,7 @@ body {
   flex-direction: column;
   justify-content: center;
   gap: 1rem;
+  position: absolute;
+  z-index: 1;
 }
 </style>
