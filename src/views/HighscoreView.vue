@@ -1,6 +1,6 @@
 <template>
   <h2 class="highscore-heading">Highscore</h2>
-  <div class="highscore-wrapper">
+  <main class="highscore-wrapper">
     <div class="highscore-type_wrapper">
       <button
         class="highscore-type"
@@ -61,7 +61,7 @@
         </tr>
       </tbody>
     </table>
-  </div>
+  </main>
 </template>
 
 <script>
