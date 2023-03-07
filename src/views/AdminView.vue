@@ -200,6 +200,7 @@ main {
 }
 table {
   margin-top: 2rem;
+  width: 80%;
 }
 
 table,
