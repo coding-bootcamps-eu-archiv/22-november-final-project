@@ -133,7 +133,7 @@
             class="enter-score_input"
             placeholder="PUT A NICKNAME"
             v-model="userName"
-            :disabled="store.highscoreID"
+            :disabled="alreadyPlayed"
           />
           <label for="username">
             <button
@@ -193,6 +193,9 @@ export default {
       return this.resultData.details.filter((question) => {
         return !question.isCorrect;
       });
+    },
+    alreadyPlayed() {
+      return this.store.highscoreID ? true : false;
     },
   },
   methods: {
