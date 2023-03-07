@@ -243,14 +243,11 @@ export default {
       this.userName = JSON.parse(localStorage.getItem("userName"));
     }
     try {
-      const response = await fetch(
-        "https://22-november.api.cbe.uber.space/quiz/result",
-        {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify(this.store.givenAnswers),
-        }
-      );
+      const response = await fetch(this.store.url + "quiz/result", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(this.store.givenAnswers),
+      });
       const resultData = await response.json();
       this.resultData = resultData;
     } catch {

@@ -1,4 +1,8 @@
 <template>
+  <login-modal v-if="isModalVisible" @closeModal="closeModal" />
+  <header class="entry-header">
+    <p class="admin" @click="showModal">Admin</p>
+  </header>
   <main>
     <h1>Time for a Quiz</h1>
     <p>please select</p>
@@ -24,12 +28,14 @@
 
 <script>
 import RadioSelect from "@/components/RadioSelect.vue";
+import LoginModal from "@/components/LoginModal.vue";
 import { useQuizStore } from "@/stores/quizStore.js";
 
 export default {
   name: "EntryView",
   components: {
     RadioSelect,
+    LoginModal,
   },
   setup() {
     const store = useQuizStore();
@@ -58,18 +64,17 @@ export default {
         },
         { title: "All", id: "all", checked: false },
       ],
+      isModalVisible: false,
     };
   },
   computed: {
     url() {
       let url = "";
       if (this.selectedTopic === "all") {
-        url = "https://22-november.api.cbe.uber.space/quiz/collection?";
+        url = this.store.url + "quiz/collection?";
       } else {
         url =
-          "https://22-november.api.cbe.uber.space/quiz/collection?group=" +
-          this.selectedTopic +
-          "&";
+          this.store.url + "quiz/collection?group=" + this.selectedTopic + "&";
       }
       return url + "limit=" + this.selectedNumberOfQuestions + "&random=1";
     },
@@ -84,10 +89,16 @@ export default {
         elapsedTime: 0,
       };
       this.store.highscoreID = "";
-      this.store.url = this.url;
+      this.store.passedUrl = this.url;
       this.$router.push({
         name: "gamePage",
       });
+    },
+    showModal() {
+      this.isModalVisible = true;
+    },
+    closeModal() {
+      this.isModalVisible = false;
     },
   },
 };
@@ -95,12 +106,26 @@ export default {
 
 <style>
 h1 {
-  margin-top: 3rem;
+  margin-top: 1rem;
 }
 
 p {
   color: rgb(227, 181, 5);
 }
+.admin {
+  text-align: right;
+  font-size: 0.7rem;
+  cursor: pointer;
+}
+
+.admin:hover {
+  color: rgb(227, 181, 5);
+}
+
+.entry-header {
+  padding: 0.5rem 1rem;
+}
+
 .entry-questions {
   display: flex;
   flex-direction: column;

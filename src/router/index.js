@@ -1,7 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
 import EntryView from "@/views/EntryView.vue";
-//import GameView from "@/views/GameView.vue";
-import ResultView from "@/views/ResultView.vue";
 import HighscoreView from "@/views/HighscoreView.vue";
 
 const routes = [
@@ -18,7 +16,18 @@ const routes = [
   {
     path: "/result",
     name: "resultPage",
-    component: ResultView,
+    component: () => import("@/views/ResultView.vue"),
+  },
+  {
+    path: "/admin/login-success/user?:user",
+    name: "adminPage",
+    component: () => import("@/views/AdminView.vue"),
+  },
+  {
+    path: "/admin/login-sucess/user?:user/:questionId",
+    name: "editQuestionPage",
+    component: () => import("@/views/EditQuestionView.vue"),
+    props: true,
   },
   {
     path: "/highscore",
