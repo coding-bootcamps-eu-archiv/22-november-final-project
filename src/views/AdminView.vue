@@ -48,7 +48,7 @@
             </button>
           </td>
         </tr>
-        <tr v-for="question of allQuestions" :key="question.id">
+        <tr v-for="question of loadQuestionsActive" :key="question.id">
           <td>{{ getGroupName(question.groupId) }}</td>
           <td>{{ question.question }}</td>
           <td>
@@ -72,10 +72,23 @@
         </tr>
       </tbody>
     </table>
-    <div>
-      <p><span>&lt;</span><span> &gt;</span></p>
-    </div>
   </main>
+  <div>
+    <button
+      class="questionNav"
+      @click="displaySetOfQuestions(-15)"
+      v-show="smallCounter !== 0"
+    >
+      &lt;
+    </button>
+    <button
+      class="questionNav"
+      @click="displaySetOfQuestions(15)"
+      v-show="bigCounter < allQuestions.length"
+    >
+      &gt;
+    </button>
+  </div>
 </template>
 <script>
 import { useQuizStore } from "@/stores/quizStore.js";
@@ -93,6 +106,8 @@ export default {
       selectedGroup: "",
       newQuestion: "",
       //newSetOfQuestions: {},
+      smallCounter: 0,
+      bigCounter: 15,
     };
   },
   async created() {
@@ -121,6 +136,9 @@ export default {
       return this.selectedGroup === "" || this.newQuestion === ""
         ? true
         : false;
+    },
+    loadQuestionsActive() {
+      return this.allQuestions.slice(this.smallCounter, this.bigCounter);
     },
   },
   methods: {
@@ -162,6 +180,10 @@ export default {
           questionId: questionId,
         },
       });
+    },
+    displaySetOfQuestions(n) {
+      this.smallCounter += n;
+      this.bigCounter += n;
     },
   },
 };
@@ -266,5 +288,14 @@ select:focus {
 
 .add-new:hover {
   background-color: rgb(11, 95, 16);
+}
+.questionNav {
+  background-color: rgb(17, 161, 26);
+  border: none;
+  border-radius: 2rem;
+  padding: 0.5rem 1rem;
+  margin: 2rem;
+  cursor: pointer;
+  width: fit-content;
 }
 </style>
