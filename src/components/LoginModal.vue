@@ -36,8 +36,8 @@ export default {
   name: "LoginModal",
   data() {
     return {
-      username: "Tim",
-      password: "cbe-November-2022",
+      username: "",
+      password: "",
       errorMessage: "",
       isError: false,
     };
