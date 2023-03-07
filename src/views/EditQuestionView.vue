@@ -98,7 +98,6 @@ export default {
   },
   methods: {
     backToAdmin() {
-      //if (this.dataChanged) return false;
       this.$router.push({ name: "adminPage" });
     },
     logout() {

@@ -92,7 +92,6 @@ export default {
       groups: [],
       selectedGroup: "",
       newQuestion: "",
-      //newSetOfQuestions: {},
     };
   },
   async created() {

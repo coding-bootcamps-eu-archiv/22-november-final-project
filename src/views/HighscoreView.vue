@@ -116,7 +116,6 @@ export default {
       });
     },
     sortByHighscore() {
-      //sort highscoreData
       return this.highscoreData.sort((a, b) => b.highscore - a.highscore);
     },
     getCurrentEntry() {
