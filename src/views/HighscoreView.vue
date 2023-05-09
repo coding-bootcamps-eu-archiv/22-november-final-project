@@ -117,7 +117,9 @@ export default {
     },
     sortByHighscore() {
       //sort highscoreData
-      return this.highscoreData.sort((a, b) => b.highscore - a.highscore);
+      return this.highscoreData
+        .sort((a, b) => a.elapsedTime - b.elapsedTime)
+        .sort((a, b) => b.highscore - a.highscore);
     },
     getCurrentEntry() {
       this.currentEntry = this.highscoreData.filter((game) => {
